@@ -18,7 +18,7 @@
         <tbody>
             {% for result in data.result %}
             <tr>
-                <td><a href="/persons/edit/{{ result.id }}">{{ result.name }}</a></td>
+                <td><a href="/persons/edit/{{ result.id }}">{% if result.name %}{{ result.name }}{% else %}Name Needed{% endif %}</a></td>
             </tr>
             {% endfor %}
         </tbody>
