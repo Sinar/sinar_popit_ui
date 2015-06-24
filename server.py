@@ -144,4 +144,4 @@ if __name__ == "__main__":
     app.wsgi_app = SessionMiddleware(app.wsgi_app, session_opts)
     app.session_interface = BeakerSessionInterface()
     app.secret_key = const.secret_key
-    app.run(debug=True, port=9000)
+    app.run(host="0.0.0.0", debug=True, port=9000)
