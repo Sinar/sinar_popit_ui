@@ -12,6 +12,7 @@ from forms.base import BaseForm
 from forms.membership import MembershipForm
 import json
 import const
+import cachecontrol
 
 # POPIT_ENDPOINT =  "http://sinar-malaysia.popit.mysociety.org/api/v0.1"
 POPIT_ENDPOINT = const.api_endpoint
@@ -23,6 +24,8 @@ class BaseView(View):
         self.template_name = template_name
         self.entity = entity
         self.data = None
+        session = requests.Session()
+        self.session = cachecontrol.CacheControl(session)
 
     def dispatch_request(self, *args, **kwargs):
         raise NotImplementedError()
@@ -47,9 +50,9 @@ class ListView(BaseView):
         headers = { "Accept-Language": language_key }
         if page:
             params = { "page": page }
-            r = requests.get(url, params=params, headers=headers)
+            r = self.session.get(url, params=params, headers=headers, verify=False)
         else:
-            r = requests.get(url, headers=headers)
+            r = self.session.get(url, headers=headers, verify=False)
         return (r.status_code, r.json())
 
     def dispatch_request(self, *args, **kwargs):
@@ -67,7 +70,7 @@ class SearchView(ListView):
         params = { "q": "%s:%s" % (key, value) }
         if page:
             params["page"] = page
-        r = requests.get(url, params=params, headers=headers)
+        r = self.session.get(url, params=params, headers=headers, verify=False)
 
         return (r.status_code, r.json())
 
@@ -114,7 +117,7 @@ class CreateView(BaseView):
         logging.warning(url)
         logging.warning(data)
 
-        r = requests.post(url, data=json.dumps(data), headers=self.headers)
+        r = self.session.post(url, data=json.dumps(data), headers=self.headers, verify=False)
         return (r.status_code, r.json())
 
     def dispatch_request(self, *args, **kwargs):
@@ -147,7 +150,7 @@ class EditView(BaseView):
     def fetch_entity(self, entity, entity_id, language_key="en"):
         self.headers["Accept-Language"] = language_key
         url = "%s/%s/%s" % (self.POPIT_ENDPOINT, entity, entity_id)
-        r = requests.get(url, headers=self.headers)
+        r = self.session.get(url, headers=self.headers, verify=False)
         logging.warning(r.json())
         if r.status_code != 200:
             return r.status_code, r.json()
@@ -253,12 +256,12 @@ class EditView(BaseView):
 
         url = "%s/%s/%s" % (self.POPIT_ENDPOINT, entity, entity_id)
         logging.warning("Data Submitted: %s" % json.dumps(data))
-        r = requests.put(url, data=json.dumps(data), headers=self.headers)
+        r = self.session.put(url, data=json.dumps(data), headers=self.headers, verify=False)
         return r.status_code, r.json()
 
     def delete_entity(self, entity, entity_id):
         url = "%s/%s/%s" % (self.POPIT_ENDPOINT, entity, entity_id)
-        r = requests.delete(url, headers=self.headers)
+        r = self.session.delete(url, headers=self.headers, verify=False)
         return r.status_code, r.json()
 
     def dispatch_request(self, entity_id):
@@ -316,7 +319,7 @@ class SearchSubItemView(SearchView):
         if "page" in kwargs:
             params["page"] = kwargs["page"]
 
-        r = requests.get(url, params=params, headers=headers)
+        r = self.session.get(url, params=params, headers=headers, verify=False)
 
         return (r.status_code, r.json())
 
@@ -360,7 +363,7 @@ class CreateSubItemView(CreateView):
     def fetch_entity(self, entity, entity_id, language_key="en"):
         self.headers["Accept-Language"] = language_key
         url = "%s/%s/%s" % (self.POPIT_ENDPOINT, entity, entity_id)
-        r = requests.get(url)
+        r = self.session.get(url, verify=False)
 
         return (r.status_code, r.json())
 
@@ -450,6 +453,6 @@ class SearchAjaxView(MethodView):
         logging.warning(url)
         logging.warning(params)
         headers = { "Accept-Language":language_key}
-        r = requests.get(url, params=params, headers=headers)
+        r = requests.get(url, params=params, headers=headers, verify=False)
 
         return (r.status_code, r.json())
