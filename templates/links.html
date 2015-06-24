@@ -1,0 +1,17 @@
+{% for links in form.links %}
+<hr>
+    <div class="form-group">
+        {{ links["id"].label }}
+        {{ links["id"](class="form-control") }}
+    </div>
+    <div class="form-group">
+        {{ links.url.label }}
+        {{ links.url(class="form-control") }}
+    </div>
+    <div class="form-group">
+        {{ links.note.label }}
+        {{ links.note(class="form-control") }}
+    </div>
+    <button class="btn btn-danger" type="submit" name="delete_item" value="links,{{ links['id'].data }}">Delete this</button>
+{% endfor %}
+<hr>

@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Posts{% endblock %}
+{% block content %}
+    <form class="form-inline" method="get" action="">
+        <div class="form-group">
+            <label for="search">Search Posts</label>
+            <input type="text" id="search" name="search"/>
+        </div>
+        <button type="submit" class="btn btn-default">Search</button>
+    </form>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for result in data["result"] %}
+                {% if parent_entity == "persons" %}
+                    {% if result.post %}
+                        <tr>
+                            <td><a href="/memberships/edit/{{ result.id }}">{{ result.post.label }} for {{ result.organization.name }}</a></td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td><a href="/memberships/edit/{{ result.id }}">Member of {{ result.organization.name }}</a></td>
+                        </tr>
+                    {% endif %}
+                {% elif parent_entity == "organizations" %}
+                    {% if result.post %}
+                        <tr>
+                            <td><a href="/memberships/edit/{{ result.id }}">{{ result.person.name }} as {{ result.post.label }}</a></td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td><a href="/memberships/edit/{{ result.id }}">{{ result.person.name }} </a></td>
+                        </tr>
+                    {% endif %}
+                {% elif parent_entity == "posts" %}
+                    <tr>
+                        <td><a href="/memberships/edit/{{ result.id }}">{{ result.person.name }}</a></td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td><a href="/memberships/edit/{{ result.id }}">{{ result.role }}</a></td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+    <!-- If this is not from search result don't show it. Maybe we should just use search result-->
+
+    <nav>
+        <ul class="pagination">
+            {% if data.page != 1 %}
+            <li>
+                {% if search_key %}
+                    <a href="?search={{ search_key }}&page={{ data.page - 1 }}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                {% else %}
+                    <a href="?page={{ data.page - 1 }}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                {% endif %}
+            </li>
+            {% endif %}
+            {% for i in range(0, ((data.total / data.per_page) + 1)|int) %}
+                {% if search_key %}
+                    <li><a href="?search={{ search_key }}&page={{ i + 1 }}">{{ i + 1 }}</a></li>
+                {% else %}
+                    <li><a href="?page={{ i + 1 }}">{{ i + 1 }}</a></li>
+                {% endif %}
+
+            {% endfor %}
+            {% if data.has_more %}
+                {% if search_key %}
+                    <li>
+                      <a href="?search={{ search_key }}&page={{ data.page + 1 }}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                      </a>
+                    </li>
+                {% else %}
+                    <li>
+                      <a href="?page={{ data.page + 1 }}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                      </a>
+                    </li>
+                {% endif %}
+            {% endif %}
+        </ul>
+    </nav>
+
+{% endblock %}

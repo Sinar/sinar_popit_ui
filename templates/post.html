@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}{% if edit %}{{ data.name }}{% else %}Create New organization{% endif %}{% endblock %}
+{% block extra_css %}
+    <link rel="stylesheet" href="/static/typeaheadjs.css">
+
+{% endblock %}
+{% block content %}
+    <!--
+    class PostForm(BaseForm):
+        label = StringField("Name")
+        role = StringField("Role")
+        organization = StringField("Organization")
+        organization_id = StringField("Organization ID")
+        start_date = StringField("Start Date")
+        end_date = StringField("End Date")
+
+
+    class PostEditForm(PostForm):
+        post_id = StringField("Post Id")
+    -->
+    <a href="/posts/{{ entity_id }}/memberships/create" class="btn btn-default">Create Membership In Post</a>
+    <a href="/posts/{{ entity_id }}/memberships" class="btn btn-default">Membership In Post</a>
+    <form method="post" action="">
+        {% if edit %}
+        <div class="form-group">
+            {{ form.id.label }}
+            {{ form.id(readonly=true, class="form-control") }}
+        </div>
+        {% endif %}
+        <div class="form-group">
+            {{ form.label.label }}
+            {{ form.label(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.role.label }}
+            {{ form.role(class="form-control") }}
+        </div>
+        <div><b>Area</b></div>
+        {% include "area.html" %}
+        <div class="form-group">
+            {{ form.organization.label }}
+            {{ form.organization(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.organization_id.label }}
+            {{ form.organization_id(readonly=true, class="form-control typeahead") }}
+        </div>
+        <div class="form-group">
+            {{ form.start_date.label }}
+            {{ form.start_date(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.end_date.label }}
+            {{ form.end_date(class="form-control") }}
+        </div>
+        <button type="submit" class="btn btn-primary" name="save" value="save">Save</button>
+        {% if edit %}
+        <button type="submit" class="btn btn-danger" name="delete" value="delete">Delete</button>
+        {% endif %}
+    </form>
+{% endblock %}
+{% block extra_script %}
+    <script src="/static/typeahead.bundle.min.js"></script>
+    <script src="/static/bloodhound.min.js"></script>
+    <script>
+    $(function(){
+        var organizations = new Bloodhound({
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace("name"),
+            queryTokenizer: Bloodhound.tokenizers.whitespace,
+            remote: {
+                url: "/search/organizations?name=%QUERY",
+                wildcard: "%QUERY"
+            },
+            limit: 10
+        });
+        organizations.initialize();
+        $("#organization").typeahead({
+                    hint: true,
+                    hightlight: true,
+                    minLength: 2
+                },
+                {
+                    displayKey: "name",
+                    source: organizations.ttAdapter()
+                }).on("typeahead:selected", function(obj, datum, name){
+                    $("#parent_id").val(datum.id);
+                    console.log(datum.id);
+                });
+        $('.tt-menu').css('background-color','#fff');
+    });
+    </script>
+{% endblock %}

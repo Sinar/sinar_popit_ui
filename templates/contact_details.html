@@ -1,0 +1,21 @@
+{% for contacts in form.contact_details %}
+    <hr>
+    <div class="form-group">
+        {{ contacts["id"].label }}
+        {{ contacts["id"](class="form-control") }}
+    </div>
+    <div class="form-group">
+        {{ contacts["type"].label }}
+        {{ contacts["type"](class="form-control") }}
+    </div>
+    <div class="form-group">
+        {{ contacts["label"].label }}
+        {{ contacts["label"](class="form-control") }}
+    </div>
+    <div class="form-group">
+        {{ contacts.value.label }}
+        {{ contacts.value(class="form-control") }}
+    </div>
+    <button class="btn btn-danger" type="submit" name="delete_item" value="contact_details,{{ contacts['id'].data }}">Delete this</button>
+{% endfor %}
+<hr>

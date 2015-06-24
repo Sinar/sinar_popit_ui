@@ -1,0 +1,25 @@
+{% for other_name in form.other_names %}
+    <hr>
+    <div class="form-group">
+        {{ other_name["id"].label }}
+        {{ other_name["id"](class="form-control") }}
+    </div>
+    <div class="form-group">
+        {{ other_name["name"].label }}
+        {{ other_name["name"](class="form-control") }}
+    </div>
+    <div class="form-group">
+        {{ other_name.start_date.label }}
+        {{ other_name.start_date(class="form-control") }}
+    </div>
+    <div class="form-group">
+        {{ other_name.end_date.label }}
+        {{ other_name.end_date(class="form-control") }}
+    </div>
+    <div class="form-group">
+        {{ other_name.note.label }}
+        {{ other_name.note(class="form-control") }}
+    </div>
+    <button class="btn btn-danger" type="submit" name="delete_item" value="other_names,{{ other_name['id'].data }}">Delete this</button>
+{% endfor %}
+<hr>

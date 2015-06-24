@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block title %}{% if edit %}{{ data.name }}{% else %}Create New organization{% endif %}{% endblock %}
+{% block extra_css %}
+    <link rel="stylesheet" href="/static/typeaheadjs.css">
+
+{% endblock %}
+{% block content %}
+    <!--
+        class PersonForm(BaseForm):
+            name = StringField("Name")
+            email = StringField("Email")
+            gender = SelectField("Gender", choices=["Male", "Female"])
+            birth_date = DateField("Birth Date")
+            death_date = DateField("Death Date")
+            summary = StringField("Summary")
+            biography = TextAreaField("Biography")
+
+
+        class PersonEditForm(PersonForm):
+            person_id = StringField("Person ID")
+    -->
+    <a href="/persons/{{ entity_id }}/memberships/create" class="btn btn-default">Create Membership In Organizations</a>
+    <a href="/persons/{{ entity_id }}/memberships" class="btn btn-default">Membership In Organizations</a>
+    <form method="post" action="">
+        <div class="form-group">
+            {{ form.language.label }}
+            {{ form.language(class="form-control") }}
+        </div>
+        {% if edit %}
+        <div class="form-group">
+            {{ form.id.label }}
+            {{ form.id(readonly=true, class="form-control") }}
+        </div>
+        {% endif %}
+        <div class="form-group">
+            {{ form.name.label }}
+            {{ form.name(class="form-control") }}
+        </div>
+        <div class="form-inline">
+            <div><b>Other Names</b></div>
+
+            {% include "other_names.html" %}
+        </div>
+        <div class="form-inline">
+            <div><b>Identifiers</b></div>
+            {% include "identifiers.html" %}
+        </div>
+        <div class="form-group">
+            {{ form.email.label }}
+            {{ form.email(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.gender.label }}
+            {{ form.gender(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.birth_date.label }}
+            {{ form.birth_date(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.death_date.label }}
+            {{ form.death_date(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.summary.label }}
+            {{ form.summary(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.biography.label }}
+            {{ form.biography(class="form-control") }}
+        </div>
+        <div class="form-inline">
+            <div><b>Contact informations</b></div>
+            {% include "contact_details.html" %}
+        </div>
+        <div class="form-inline">
+            <div><b>Links</b></div>
+            {% include "links.html" %}
+        </div>
+        <button type="submit" class="btn btn-primary" name="save" value="save">Save</button>
+        {% if edit %}
+        <button type="submit" class="btn btn-danger" name="delete" value="delete">Delete</button>
+        {% endif %}
+    </form>
+{% endblock %}
+{% block extra_script %}
+    <script src="/static/typeahead.bundle.min.js"></script>
+    <script src="/static/bloodhound.min.js"></script>
+    <script>
+    $(function(){
+        var organizations = new Bloodhound({
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace("name"),
+            queryTokenizer: Bloodhound.tokenizers.whitespace,
+            remote: {
+                url: "/search/organizations?name=%QUERY",
+                wildcard: "%QUERY"
+            },
+            limit: 10
+        });
+        organizations.initialize();
+        $("#parent").typeahead({
+                    hint: true,
+                    hightlight: true,
+                    minLength: 2
+                },
+                {
+                    displayKey: "name",
+                    source: organizations.ttAdapter()
+                }).on("typeahead:selected", function(obj, datum, name){
+                    $("#parent_id").val(datum.id);
+                    console.log(datum.id);
+                });
+        $('.tt-menu').css('background-color','#fff');
+    });
+    </script>
+{% endblock %}

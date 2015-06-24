@@ -1,0 +1,17 @@
+{% for identifier in form.identifiers %}
+    <hr>
+    <div class="form-group">
+        {{ identifier["id"].label }}
+        {{ identifier["id"](class="form-control") }}
+    </div>
+    <div class="form-group">
+        {{ identifier.identifier.label }}
+        {{ identifier.identifier(class="form-control") }}
+    </div>
+    <div class="form-group">
+        {{ identifier.scheme.label }}
+        {{ identifier.scheme(class="form-control") }}
+    </div>
+    <button class="btn btn-danger" type="submit" name="delete_item" value="identifiers,{{ identifier['id'].data }}">Delete this</button>
+{% endfor %}
+<hr>
