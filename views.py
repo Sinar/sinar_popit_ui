@@ -107,15 +107,23 @@ class CreateView(BaseView):
 
         form_data = form.data
         logging.warning(form_data)
+        logging.warning(self.entity)
         for key in form_data:
             if not form.data[key]:
                 continue
-            if "id" in key:
+            elif "id" in key:
                 data[key] =  str(form.data[key])
+            elif key == "area":
+                if not any(form.data[key].values()):
+                    logging.warning(form.data[key].values())
+                    # Because id is a required field
+                    continue
+            elif key in ("organization", "person", "post"):
+                continue
             else:
                 data[key] = { language_key: str(form.data[key]) }
         logging.warning(url)
-        logging.warning(data)
+        logging.warning("data submitted: %s" % data)
 
         r = self.session.post(url, data=json.dumps(data), headers=self.headers, verify=False)
         return (r.status_code, r.json())
@@ -126,8 +134,10 @@ class CreateView(BaseView):
 
         if server_request.form:
             form = self.form(server_request.form)
-
+            logging.warning(form)
+            logging.warning(server_request.form)
             if form.validate():
+                logging.warning(form.data)
                 status_code, data = self.create_entity(form, language_key=language)
                 if status_code != 200:
                     return self.render_error(error_code=status_code, content=data)
@@ -210,6 +220,12 @@ class EditView(BaseView):
 
                 data[key] = original_data[key]
                 data[key][language_key] = form.data[key]
+            if key in ("organization", "person", "post"):
+                continue
+
+            if key == "area":
+                if not any(form.data[key].values()):
+                    continue
 
             if type(form.data[key]) is list:
                 logging.warning("form is list")
@@ -378,9 +394,10 @@ class CreateSubItemView(CreateView):
         init_data = { parent_id_key: parent_id, parent_key: data["result"]["name"]}
         form = self.form.from_json(init_data)
         if server_request.form:
+            logging.warning(server_request.form)
             form = self.form(server_request.form)
             if form.validate():
-                status_code, data = self.create_entity(self.form, language_key=language)
+                status_code, data = self.create_entity(form, language_key=language)
                 if status_code != 200:
                     return self.render_error(error_code=status_code, content=data)
             return redirect("/%s" % self.parent_entity)
@@ -426,7 +443,7 @@ class PostMembershipCreateView(CreateSubItemView):
         )
         if server_request.form:
             form = self.form(server_request.form)
-            if form.validate_on_submit():
+            if form.validate():
                 status_code, data = self.create_entity(form)
                 if status_code != 200:
                     return self.render_error(error_code=status_code, content=data)
