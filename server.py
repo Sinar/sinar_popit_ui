@@ -6,11 +6,16 @@ from views import SearchAjaxView
 from views import SearchSubItemView
 from views import CreateSubItemView
 from views import PostMembershipCreateView
-from flask import Flask
 from flask import session
 from flask import request
 from flask import redirect
+from flask import render_template
+from flask import url_for
 from flask.sessions import SessionInterface
+from flask_login import LoginManager
+from flask_login import login_user
+from flask.ext.security import Security, SQLAlchemyUserDatastore, login_required
+import bcrypt
 from forms.organization import OrganizationEditForms
 from forms.organization import OrganizationForms
 from forms.posts import PostEditForm
@@ -19,14 +24,32 @@ from forms.membership import MembershipForm
 from forms.membership import MembershipEditForm
 from forms.person import PersonForm
 from forms.person import PersonEditForm
+from forms.login import LoginForm
 from beaker.middleware import SessionMiddleware
 import logging
 import const
+from app import app
+from db import User
+from db import Role
+from app import db
+
 
 
 
 api_key= const.api_key
-app = Flask(__name__)
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+
+user_datastore = SQLAlchemyUserDatastore(db, User, Role)
+security = Security(app, user_datastore)
+
+# TODO: Make sure this work
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(user_id)
+
 
 app.add_url_rule('/organizations', view_func=SearchView.as_view("organizations", entity="organizations",
                                                                 template_name="organizations.html"))
@@ -58,7 +81,6 @@ app.add_url_rule('/organizations/<parent_id>/posts/create', view_func=CreateSubI
                                                                                                 api_key=api_key,
                                                                                                 form=PostForm
                                                                                                 ))
-
 
 app.add_url_rule('/posts/<parent_id>/memberships', view_func=SearchSubItemView.as_view("post_membership_list",
                                                                                            parent_entity="posts",
@@ -140,8 +162,21 @@ def set_language(language_code):
     logging.warning(session)
     return redirect(request.referrer)
 
+@app.route("/logged_in")
+@login_required
+def logged_in():
+    return "logged in"
+
+@app.before_first_request
+def create_user():
+    db.create_all()
+    if not user_datastore.find_user(email=const.admin_name):
+        user_datastore.create_user(email=const.admin_name, password=const.admin_pass)
+        db.session.commit()
+
+
+
 if __name__ == "__main__":
     app.wsgi_app = SessionMiddleware(app.wsgi_app, session_opts)
     app.session_interface = BeakerSessionInterface()
-    app.secret_key = const.secret_key
     app.run(host="0.0.0.0", debug=True, port=9000)

@@ -6,6 +6,7 @@ from flask import request as server_request
 from flask import Response
 from flask import redirect
 from flask import session
+from flask_security import login_required
 import requests
 import logging
 from forms.base import BaseForm
@@ -14,12 +15,14 @@ import json
 import const
 import cachecontrol
 
+
 # POPIT_ENDPOINT =  "http://sinar-malaysia.popit.mysociety.org/api/v0.1"
 POPIT_ENDPOINT = const.api_endpoint
 SUPPORTED_LANGUAGE = ["ms", "en"]
 
 class BaseView(View):
     POPIT_ENDPOINT =  POPIT_ENDPOINT
+    decorators = [login_required]
     def __init__(self, entity, template_name):
         self.template_name = template_name
         self.entity = entity
@@ -366,7 +369,6 @@ class SearchSubItemView(SearchView):
         return self.render_template(data=data, search_key=search_key, parent_id=parent_id, parent_entity=self.parent_entity)
 
 
-# TODO: This won't work because you are trying to fit an entity into a different field
 class CreateSubItemView(CreateView):
     def __init__(self, parent_entity, entity, template_name, api_key, form):
         if not issubclass(form, BaseForm):
