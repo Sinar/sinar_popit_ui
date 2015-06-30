@@ -35,10 +35,14 @@
             {{ form.name.label }}
             {{ form.name(class="form-control") }}
         </div>
+        {% if form.other_names %}
         <div><b>Other name</b></div>
         {% include "other_names.html" %}
+        {% endif %}
+        {% if form.identifiers %}
         <div><b>Identifiers</b></div>
         {% include "identifiers.html" %}
+        {% endif %}
         <div><b>Area</b></div>
         {% include "area.html" %}
         <div class="form-group">
@@ -61,10 +65,14 @@
             {{ form.dissolution_date.label }}
             {{ form.dissolution_date(class="form-control") }}
         </div>
+        {% if form.contact_details %}
         <div><b>Contact Details</b></div>
         {% include "contact_details.html" %}
+        {% endif %}
+        {% if form.links %}
         <div><b>Links</b></div>
         {% include "links.html" %}
+        {% endif %}
         <button type="submit" class="btn btn-primary" name="save" value="save">Save</button>
         {% if edit %}
         <button type="submit" class="btn btn-danger" name="delete" value="delete">Delete</button>

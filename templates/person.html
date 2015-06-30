@@ -36,15 +36,19 @@
             {{ form.name.label }}
             {{ form.name(class="form-control") }}
         </div>
+        {% if form.other_names %}
         <div class="form-inline">
             <div><b>Other Names</b></div>
 
             {% include "other_names.html" %}
         </div>
+        {% endif %}
+        {% if form.identifiers %}
         <div class="form-inline">
             <div><b>Identifiers</b></div>
             {% include "identifiers.html" %}
         </div>
+        {% endif %}
         <div class="form-group">
             {{ form.email.label }}
             {{ form.email(class="form-control") }}
@@ -69,14 +73,18 @@
             {{ form.biography.label }}
             {{ form.biography(class="form-control") }}
         </div>
+        {% if form.contact_details %}
         <div class="form-inline">
             <div><b>Contact informations</b></div>
             {% include "contact_details.html" %}
         </div>
+        {% endif %}
+        {% if form.links %}
         <div class="form-inline">
             <div><b>Links</b></div>
             {% include "links.html" %}
         </div>
+        {% endif %}
         <button type="submit" class="btn btn-primary" name="save" value="save">Save</button>
         {% if edit %}
         <button type="submit" class="btn btn-danger" name="delete" value="delete">Delete</button>
