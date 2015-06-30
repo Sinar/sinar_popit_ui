@@ -9,13 +9,9 @@ from views import PostMembershipCreateView
 from flask import session
 from flask import request
 from flask import redirect
-from flask import render_template
-from flask import url_for
 from flask.sessions import SessionInterface
 from flask_login import LoginManager
-from flask_login import login_user
 from flask.ext.security import Security, SQLAlchemyUserDatastore, login_required
-import bcrypt
 from forms.organization import OrganizationEditForms
 from forms.organization import OrganizationForms
 from forms.posts import PostEditForm
@@ -24,7 +20,6 @@ from forms.membership import MembershipForm
 from forms.membership import MembershipEditForm
 from forms.person import PersonForm
 from forms.person import PersonEditForm
-from forms.login import LoginForm
 from beaker.middleware import SessionMiddleware
 import logging
 import const
@@ -44,11 +39,6 @@ login_manager.login_view = 'login'
 
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 security = Security(app, user_datastore)
-
-# TODO: Make sure this work
-@login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(user_id)
 
 
 app.add_url_rule('/organizations', view_func=SearchView.as_view("organizations", entity="organizations",
