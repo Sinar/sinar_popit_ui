@@ -172,7 +172,7 @@ from wtforms import FormField
 class PersonForm(BaseForm):
     language = StringField("Language")
     name = StringField("Name")
-    other_names = FieldList(FormField(OtherNameForm), min_entries=1)
+    other_names = FieldList(FormField(OtherNameForm))
     identifiers = FieldList(FormField(IdentifiersForm))
     email = StringField("Email")
     gender = SelectField("Gender", choices=[("Male", "Male"), ("Female", "Female")])
