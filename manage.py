@@ -17,5 +17,9 @@ def create_user(email, password):
         user_datastore.create_user(email=email, password=password)
     db.session.commit()
 
+@manager.command
+def create_db():
+    db.create_all()
+
 if __name__ == "__main__":
     manager.run()
