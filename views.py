@@ -278,6 +278,20 @@ class EditView(BaseView):
         r = self.session.put(url, data=json.dumps(data), headers=self.headers, verify=False)
         return r.status_code, r.json()
 
+    def clean_form(self, form):
+        key_to_pop = []
+        for key in form.data:
+            logging.warning(key)
+            if hasattr(form[key], "entries"):
+                if not form[key].entries:
+                    continue
+                logging.warning(form[key].entries)
+                if not any(form[key].entries[-1].data.values()):
+                    key_to_pop.append(key)
+        for key in key_to_pop:
+            form[key].pop_entry()
+        return form
+
     def delete_entity(self, entity, entity_id):
         url = "%s/%s/%s" % (self.POPIT_ENDPOINT, entity, entity_id)
         r = self.session.delete(url, headers=self.headers, verify=False)
@@ -302,6 +316,8 @@ class EditView(BaseView):
 
         if server_request.form:
             form = self.form(server_request.form)
+            form = self.clean_form(form)
+
             logging.warning(form.data)
             logging.warning(form.validate())
             logging.warning(form.errors)
@@ -311,6 +327,7 @@ class EditView(BaseView):
                 status_code, data = self.update_entity(self.entity, entity_id, form, edit_data, delete_field, language_key=language)
                 if status_code != 200:
                     return self.render_error(error_code=status_code, content=data)
+                return redirect("/%s/edit/%s" % (self.entity, entity_id))
 
         return self.render_template(self.template_name, form=form, data=self.data["result"], edit=True, entity_id=entity_id)
 

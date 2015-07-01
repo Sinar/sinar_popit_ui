@@ -33,6 +33,17 @@
         </div>
         {% endif %}
         <div class="form-group">
+            {% if form.name.errors %}
+                <div class="errors">
+                    {% for error in form.name.errors %}
+                        <div class="alert alert-danger" role="alert">
+                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                        <span class="sr-only">Error:</span>
+                        {{ error }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
             {{ form.name.label }}
             {{ form.name(class="form-control") }}
         </div>
@@ -50,6 +61,17 @@
         </div>
         {% endif %}
         <div class="form-group">
+            {% if form.email.errors %}
+                <div class="errors">
+                    {% for error in form.email.errors %}
+                        <div class="alert alert-danger" role="alert">
+                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                        <span class="sr-only">Error:</span>
+                        {{ error }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
             {{ form.email.label }}
             {{ form.email(class="form-control") }}
         </div>
@@ -58,10 +80,32 @@
             {{ form.gender(class="form-control") }}
         </div>
         <div class="form-group">
+            {% if form.birth_date.errors %}
+                <div class="errors">
+                    {% for error in form.birth_date.errors %}
+                        <div class="alert alert-danger" role="alert">
+                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                        <span class="sr-only">Error:</span>
+                        {{ error }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
             {{ form.birth_date.label }}
             {{ form.birth_date(class="form-control") }}
         </div>
         <div class="form-group">
+            {% if form.death_date.errors %}
+                <div class="errors">
+                    {% for error in form.death_date.errors %}
+                        <div class="alert alert-danger" role="alert">
+                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                        <span class="sr-only">Error:</span>
+                        {{ error }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
             {{ form.death_date.label }}
             {{ form.death_date(class="form-control") }}
         </div>

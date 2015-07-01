@@ -1,8 +1,7 @@
 __author__ = 'sweemeng'
 from base import BaseForm
 from wtforms import StringField
-from wtforms import DateField
-from wtforms import SelectField
+
 from wtforms import FieldList
 from wtforms import FormField
 from misc import ContactForm
@@ -10,6 +9,9 @@ from misc import IdentifiersForm
 from misc import OtherNameForm
 from misc import LinkForm
 from misc import Area
+from wtforms.validators import DataRequired
+from wtforms.validators import Regexp
+from wtforms.validators import Optional
 
 
 """
@@ -62,14 +64,14 @@ from misc import Area
 }
 """
 class OrganizationForms(BaseForm):
-    name = StringField("Name")
+    name = StringField("Name", validators=[DataRequired()])
     other_names = FieldList(FormField(OtherNameForm))
     identifiers = FieldList(FormField(IdentifiersForm))
     classification = StringField("Classification")
     parent_id = StringField("Parent ID")
     parent = StringField("Parent Organization")
-    founding_date = StringField("Founding Date")
-    dissolution_date = StringField("Dissolution Date")
+    founding_date = StringField("Founding Date", validators=[Optional(), Regexp("^[0-9]{4}(-[0-9]{2}){0,2}$")])
+    dissolution_date = StringField("Dissolution Date", validators=[Optional(), Regexp("^[0-9]{4}(-[0-9]{2}){0,2}$")])
     area = FormField(Area)
     contact_details = FieldList(FormField(ContactForm))
     links = FieldList(FormField(LinkForm))

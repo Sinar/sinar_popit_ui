@@ -109,7 +109,7 @@ class PostForm(BaseForm):
     label = StringField("Name")
     role = StringField("Role")
     organization = StringField("Organization")
-    organization_id = StringField("Organization ID")
+    organization_id = StringField("Organization ID", validators=[DataRequired()])
     area = FormField(Area)
     start_date = StringField("Start Date")
     end_date = StringField("End Date")

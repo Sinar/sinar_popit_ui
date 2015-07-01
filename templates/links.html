@@ -1,14 +1,32 @@
 {% for links in form.links %}
 <hr>
     <div class="form-group">
-        {{ links["id"].label }}
-        {{ links["id"](class="form-control", readonly=true) }}
-    </div>
-    <div class="form-group">
+       {% if links.url.errors %}
+            <div class="errors">
+                {% for error in links.url.errors %}
+                    <div class="alert alert-danger" role="alert">
+                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                    <span class="sr-only">Error:</span>
+                    {{ error }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
         {{ links.url.label }}
         {{ links.url(class="form-control") }}
     </div>
     <div class="form-group">
+        {% if links.note.errors %}
+            <div class="errors">
+                {% for error in links.note.errors %}
+                    <div class="alert alert-danger" role="alert">
+                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                    <span class="sr-only">Error:</span>
+                    {{ error }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
         {{ links.note.label }}
         {{ links.note(class="form-control") }}
     </div>

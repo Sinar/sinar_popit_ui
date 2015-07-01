@@ -10,6 +10,10 @@ from wtforms import DateField
 from wtforms import SelectField
 from wtforms import FieldList
 from wtforms import FormField
+from wtforms.validators import DataRequired
+from wtforms.validators import Regexp
+from wtforms.validators import Email
+from wtforms.validators import Optional
 
 
 """
@@ -170,14 +174,13 @@ from wtforms import FormField
 
 """
 class PersonForm(BaseForm):
-    language = StringField("Language")
-    name = StringField("Name")
+    name = StringField("Name", validators=[DataRequired()])
     other_names = FieldList(FormField(OtherNameForm))
     identifiers = FieldList(FormField(IdentifiersForm))
-    email = StringField("Email")
+    email = StringField("Email", validators=[Optional(), Email()])
     gender = SelectField("Gender", choices=[("Male", "Male"), ("Female", "Female")])
-    birth_date = StringField("Birth Date")
-    death_date = StringField("Death Date")
+    birth_date = StringField("Birth Date", validators=[Optional(), Regexp("^[0-9]{4}(-[0-9]{2}){0,2}$")])
+    death_date = StringField("Death Date", validators=[Optional(), Regexp("^[0-9]{4}(-[0-9]{2}){0,2}$")])
     summary = StringField("Summary")
     biography = TextAreaField("Biography")
     contact_details = FieldList(FormField(ContactForm))

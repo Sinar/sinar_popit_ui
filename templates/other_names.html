@@ -1,18 +1,47 @@
 {% for other_name in form.other_names %}
     <hr>
     <div class="form-group">
-        {{ other_name["id"].label }}
-        {{ other_name["id"](class="form-control", readonly=true) }}
-    </div>
-    <div class="form-group">
+        {% if other_name["name"].errors %}
+            <div class="errors">
+                {% for error in other_name["name"].errors %}
+                    <div class="alert alert-danger" role="alert">
+                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                    <span class="sr-only">Error:</span>
+                    {{ error }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
         {{ other_name["name"].label }}
         {{ other_name["name"](class="form-control") }}
     </div>
     <div class="form-group">
+        {% if other_name.start_date.errors %}
+        <div class="errors">
+            {% for error in other_name.start_date.errors %}
+                <div class="alert alert-danger" role="alert">
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                <span class="sr-only">Error:</span>
+                {{ error }}
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
         {{ other_name.start_date.label }}
         {{ other_name.start_date(class="form-control") }}
     </div>
     <div class="form-group">
+        {% if other_name.end_date.errors %}
+        <div class="errors">
+            {% for error in other_name.end_date.errors %}
+                <div class="alert alert-danger" role="alert">
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                <span class="sr-only">Error:</span>
+                {{ error }}
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
         {{ other_name.end_date.label }}
         {{ other_name.end_date(class="form-control") }}
     </div>

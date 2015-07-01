@@ -32,6 +32,17 @@
         </div>
         {% endif %}
         <div class="form-group">
+            {% if form.name.errors %}
+                <div class="errors">
+                    {% for error in form.name.errors %}
+                        <div class="alert alert-danger" role="alert">
+                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                        <span class="sr-only">Error:</span>
+                        {{ error }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
             {{ form.name.label }}
             {{ form.name(class="form-control") }}
         </div>
@@ -46,6 +57,17 @@
         <div><b>Area</b></div>
         {% include "area.html" %}
         <div class="form-group">
+            {% if form.classification.errors %}
+                <div class="errors">
+                    {% for error in form.classification.errors %}
+                        <div class="alert alert-danger" role="alert">
+                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                        <span class="sr-only">Error:</span>
+                        {{ error }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
             {{ form.classification.label }}
             {{ form.classification(class="form-control") }}
         </div>
@@ -58,10 +80,32 @@
             {{ form.parent(class="form-control typeahead") }}
         </div>
         <div class="form-group">
+            {% if form.founding_date.errors %}
+                <div class="errors">
+                    {% for error in form.founding_date.errors %}
+                        <div class="alert alert-danger" role="alert">
+                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                        <span class="sr-only">Error:</span>
+                        {{ error }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
             {{ form.founding_date.label }}
             {{ form.founding_date(class="form-control") }}
         </div>
         <div class="form-group">
+            {% if form.dissolution_date.errors %}
+                <div class="errors">
+                    {% for error in form.dissolution_date.errors %}
+                        <div class="alert alert-danger" role="alert">
+                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                        <span class="sr-only">Error:</span>
+                        {{ error }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
             {{ form.dissolution_date.label }}
             {{ form.dissolution_date(class="form-control") }}
         </div>
