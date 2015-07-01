@@ -8,7 +8,6 @@ from flask import redirect
 from flask import session
 from flask_security import login_required
 import requests
-import logging
 from forms.base import BaseForm
 from forms.membership import MembershipForm
 import json
@@ -48,8 +47,6 @@ class ListView(BaseView):
     def fetch_entity(self, entity, page=0, language_key="en"):
         url = "%s/%s" % (self.POPIT_ENDPOINT, entity)
 
-        logging.warning("fetching from url %s" % url)
-        logging.warning("entity is %s"% entity)
         headers = { "Accept-Language": language_key }
         if page:
             params = { "page": page }
@@ -109,8 +106,7 @@ class CreateView(BaseView):
         data = {}
 
         form_data = form.data
-        logging.warning(form_data)
-        logging.warning(self.entity)
+
         for key in form_data:
             if not form.data[key]:
                 continue
@@ -118,15 +114,12 @@ class CreateView(BaseView):
                 data[key] =  str(form.data[key])
             elif key == "area":
                 if not any(form.data[key].values()):
-                    logging.warning(form.data[key].values())
                     # Because id is a required field
                     continue
             elif key in ("organization", "person", "post"):
                 continue
             else:
                 data[key] = { language_key: str(form.data[key]) }
-        logging.warning(url)
-        logging.warning("data submitted: %s" % data)
 
         r = self.session.post(url, data=json.dumps(data), headers=self.headers, verify=False)
         return (r.status_code, r.json())
@@ -137,10 +130,8 @@ class CreateView(BaseView):
 
         if server_request.form:
             form = self.form(server_request.form)
-            logging.warning(form)
-            logging.warning(server_request.form)
+
             if form.validate():
-                logging.warning(form.data)
                 status_code, data = self.create_entity(form, language_key=language)
                 if status_code != 200:
                     return self.render_error(error_code=status_code, content=data)
@@ -164,7 +155,7 @@ class EditView(BaseView):
         self.headers["Accept-Language"] = language_key
         url = "%s/%s/%s" % (self.POPIT_ENDPOINT, entity, entity_id)
         r = self.session.get(url, headers=self.headers, verify=False)
-        logging.warning(r.json())
+
         if r.status_code != 200:
             return r.status_code, r.json()
         data = r.json()["result"]
@@ -174,16 +165,16 @@ class EditView(BaseView):
                 if key == "parent_id":
                     if value:
                         status, temp_data = self.fetch_entity("organizations", value, language_key=language_key)
-                        logging.warning(status)
+
                         if status == 200:
                             data["parent"] = temp_data["result"]["name"]
                 else:
-                    logging.warning(key)
+
                     temp_entity, temp_id = key.split("_")
 
                     temp_entity = "%ss" % temp_entity
                     status, temp_data = self.fetch_entity(temp_entity, value, language_key=language_key)
-                    logging.warning(temp_data["result"].keys())
+
                     if "name" in temp_data["result"]:
                         data[temp_entity[:-1]] = temp_data["result"]["name"]
                     else:
@@ -211,7 +202,7 @@ class EditView(BaseView):
         original_data = original["result"]
 
         data = {}
-        logging.warning(form.data)
+
         if delete_field:
             field_delete, field_id = delete_field.split(",")
         else:
@@ -231,7 +222,7 @@ class EditView(BaseView):
                     continue
 
             if type(form.data[key]) is list:
-                logging.warning("form is list")
+
                 temp_list = []
 
                 for item in form.data[key]:
@@ -244,11 +235,9 @@ class EditView(BaseView):
                     for key_ in item:
                         test_list.append(item[key_])
                         if item[key_]:
-                            logging.warning("current item:%s" % new_item)
                             new_item[key_] = item[key_]
-                    logging.warning("Entry in testlist: %s" % test_list)
+
                     if any(test_list):
-                        logging.warning("Entry in testlist: %s" % test_list)
                         temp_list.append(new_item)
 
                 if original_data[key] == temp_list:
@@ -274,18 +263,17 @@ class EditView(BaseView):
 
 
         url = "%s/%s/%s" % (self.POPIT_ENDPOINT, entity, entity_id)
-        logging.warning("Data Submitted: %s" % json.dumps(data))
+
         r = self.session.put(url, data=json.dumps(data), headers=self.headers, verify=False)
         return r.status_code, r.json()
 
     def clean_form(self, form):
         key_to_pop = []
         for key in form.data:
-            logging.warning(key)
             if hasattr(form[key], "entries"):
                 if not form[key].entries:
                     continue
-                logging.warning(form[key].entries)
+
                 if not any(form[key].entries[-1].data.values()):
                     key_to_pop.append(key)
         for key in key_to_pop:
@@ -318,9 +306,6 @@ class EditView(BaseView):
             form = self.form(server_request.form)
             form = self.clean_form(form)
 
-            logging.warning(form.data)
-            logging.warning(form.validate())
-            logging.warning(form.errors)
             delete_field = server_request.form.get("delete_item")
             if form.validate():
                 edit_data = self.assemble_data(self.entity, entity_id)
@@ -349,8 +334,6 @@ class SearchSubItemView(SearchView):
             queries.append("%s:%s" % (key,value))
         url = "%s/search/%s" % (self.POPIT_ENDPOINT, entity)
         params = { "q": "%".join(queries) }
-        logging.warning(url)
-        logging.warning(params)
 
         if "page" in kwargs:
             params["page"] = kwargs["page"]
@@ -378,10 +361,7 @@ class SearchSubItemView(SearchView):
             return self.render_template(data=data, search_key=search_key, parent_id=parent_id)
 
         # Because parent_id do not link back to child and vice versa
-        logging.warning(query)
         status_code, data = self.search_entity(self.entity, **query)
-        logging.warning(data)
-        logging.warning(data["page"])
 
         return self.render_template(data=data, search_key=search_key, parent_id=parent_id, parent_entity=self.parent_entity)
 
@@ -413,7 +393,7 @@ class CreateSubItemView(CreateView):
         init_data = { parent_id_key: parent_id, parent_key: data["result"]["name"]}
         form = self.form.from_json(init_data)
         if server_request.form:
-            logging.warning(server_request.form)
+
             form = self.form(server_request.form)
             if form.validate():
                 status_code, data = self.create_entity(form, language_key=language)
@@ -486,8 +466,7 @@ class SearchAjaxView(MethodView):
     def fetch_entity(self, entity, key, value, language_key="en"):
         url = "%s/search/%s" % (self.POPIT_ENDPOINT, entity)
         params = { "q": "%s:%s" % (key, value) }
-        logging.warning(url)
-        logging.warning(params)
+
         headers = { "Accept-Language":language_key}
         r = requests.get(url, params=params, headers=headers, verify=False)
 

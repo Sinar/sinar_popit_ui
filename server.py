@@ -21,7 +21,6 @@ from forms.membership import MembershipEditForm
 from forms.person import PersonForm
 from forms.person import PersonEditForm
 from beaker.middleware import SessionMiddleware
-import logging
 import const
 from app import app
 from db import User
@@ -149,7 +148,7 @@ def set_language(language_code):
     if language_code not in ("ms", "en"):
         session["language"] = "en"
     session["language"] = language_code
-    logging.warning(session)
+
     return redirect(request.referrer)
 
 @app.route("/logged_in")
