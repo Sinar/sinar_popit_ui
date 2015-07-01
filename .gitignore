@@ -61,3 +61,6 @@ docs/_build/
 
 #sftp configuration file
 sftp-config.json
+
+# Our yaml config file
+config.yaml
