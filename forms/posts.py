@@ -5,7 +5,8 @@ from wtforms import FormField
 from wtforms.validators import DataRequired
 from base import BaseForm
 from misc import Area
-
+from wtforms.validators import Regexp
+from wtforms.validators import Optional
 
 """
 Form json schema in popolo
@@ -111,8 +112,8 @@ class PostForm(BaseForm):
     organization = StringField("Organization")
     organization_id = StringField("Organization ID", validators=[DataRequired()])
     area = FormField(Area)
-    start_date = StringField("Start Date")
-    end_date = StringField("End Date")
+    start_date = StringField("Start Date", validators=[Regexp("^[0-9]{4}(-[0-9]{2}){0,2}$"), Optional()])
+    end_date = StringField("End Date", validators=[Regexp("^[0-9]{4}(-[0-9]{2}){0,2}$"), Optional()])
 
 
 class PostEditForm(PostForm):

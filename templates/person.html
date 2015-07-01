@@ -118,13 +118,13 @@
             {{ form.biography(class="form-control") }}
         </div>
         {% if form.contact_details %}
-        <div class="form-inline">
+        <div>
             <div><b>Contact informations</b></div>
             {% include "contact_details.html" %}
         </div>
         {% endif %}
         {% if form.links %}
-        <div class="form-inline">
+        <div>
             <div><b>Links</b></div>
             {% include "links.html" %}
         </div>

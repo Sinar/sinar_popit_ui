@@ -5,6 +5,7 @@ from wtforms import HiddenField
 from wtforms.validators import DataRequired
 from wtforms.validators import Regexp
 from wtforms.validators import Optional
+from wtforms.validators import URL
 
 # This is field that is shared by other field
 # All these field is a list field
@@ -19,7 +20,7 @@ class ContactForm(Form):
 
 class LinkForm(Form):
     id = HiddenField("id")
-    url = StringField("URL", validators=[DataRequired()])
+    url = StringField("URL", validators=[DataRequired(), URL()])
     note = StringField("Note")
 
 
