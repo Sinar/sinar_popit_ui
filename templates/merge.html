@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block content %}
+    <form action="" method="post">
+    <div>Merge {{ form.source }}{{ form.source_id }} to {{ form.target }}{{ form.target_id }}</div>
+
+    <button type="submit">Merge</button>
+    </form>
+{% endblock %}
+{% block extra_script %}
+    <script src="/static/typeahead.bundle.min.js"></script>
+    <script src="/static/bloodhound.min.js"></script>
+    <script>
+    $(function(){
+        var persons = new Bloodhound({
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace("name"),
+            queryTokenizer: Bloodhound.tokenizers.whitespace,
+            remote: {
+                url: "/search/persons?name=%QUERY",
+                wildcard: "%QUERY"
+            },
+            limit: 10
+        });
+        persons.initialize();
+        $("#source").typeahead({
+                    hint: true,
+                    hightlight: true,
+                    minLength: 2
+                },
+                {
+                    displayKey: "name",
+                    source: persons.ttAdapter()
+                }).on("typeahead:selected", function(obj, datum, name){
+                    $("#source_id").val(datum.id);
+                    console.log(datum.id);
+                });
+        $("#target").typeahead({
+                    hint: true,
+                    hightlight: true,
+                    minLength: 2
+                },
+                {
+                    displayKey: "name",
+                    source: persons.ttAdapter()
+                }).on("typeahead:selected", function(obj, datum, name){
+                    $("#target_id").val(datum.id);
+                    console.log(datum.id);
+                });
+        $('.tt-menu').css('background-color','#fff');
+    });
+    </script>
+{% endblock %}

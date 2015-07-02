@@ -10,6 +10,7 @@ from flask_security import login_required
 import requests
 from forms.base import BaseForm
 from forms.membership import MembershipForm
+from forms.merge import MergeForm
 import json
 import const
 import cachecontrol
@@ -406,6 +407,7 @@ class CreateSubItemView(CreateView):
 
 # Since this is a special case We might as well just set the parameter
 class PostMembershipCreateView(CreateSubItemView):
+
     def __init__(self, template_name, api_key):
         parent_entity = "posts"
         entity = "memberships"
@@ -447,6 +449,64 @@ class PostMembershipCreateView(CreateSubItemView):
                 if status_code != 200:
                     return self.render_error(error_code=status_code, content=data)
         return self.render_template(self.template_name, form=form, parent_id=parent_id)
+
+
+class MergePersonView(BaseView):
+    methods = ["GET", "POST"]
+    def __init__(self, entity, api_key):
+        template_name = "merge.html"
+
+        super(MergePersonView, self).__init__(entity,template_name)
+
+        self.headers = { "Content-Type":"application/json", "Apikey":api_key }
+
+    def fetch_entity(self, entity, entity_id, language_key="en"):
+        headers = {}
+        headers["Accept-Language"] = language_key
+        url = "%s/%s/%s" % (self.POPIT_ENDPOINT, entity, entity_id)
+        r = self.session.get(url, verify=False)
+
+        return (r.status_code, r.json())
+
+    def dispatch_request(self, *args, **kwargs):
+        form = MergeForm()
+        if server_request.form:
+            form = MergeForm(server_request.form)
+            if form.validate():
+                target_id = form.target_id.data
+                source_id = form.source_id.data
+
+                status_code, source = self.fetch_entity(self.entity, target_id)
+                if status_code != 200:
+                    return self.render_error(error_code=status_code, content=source)
+                status_code, target = self.fetch_entity(self.entity, source_id)
+
+                if status_code != 200:
+                    return self.render_error(error_code=status_code, content=source)
+
+                for membership in target["result"]["memberships"]:
+                    data = {}
+                    try:
+                        data["role"] = membership["role"]
+                        data["person_id"] = target_id
+                        data["organization_id"] = membership["organization_id"]
+                        if "post_id" in membership:
+                            data["post_id"] = membership["post_id"]
+                        data["start_date"] = membership["start_date"]
+                        if "end_data" in membership:
+                            data["end_date"] = membership["end_date"]
+                    except Exception as e:
+                        print "attempting to merge: ", membership
+                        print e.message
+                        return self.render_error("500", content='{"Error":"%s"}' % e.message)
+
+                    url = "%s/%s" % (POPIT_ENDPOINT, "memberships")
+                    r = requests.post(url, headers=self.headers, data=json.dumps(data), verify=False)
+                    if r.status_code != 200:
+                        return self.render_error(error_code=r.status_code, content=r.json())
+
+        return self.render_template(self.template_name, form=form)
+
 
 
 class SearchAjaxView(MethodView):

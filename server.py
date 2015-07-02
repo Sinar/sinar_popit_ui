@@ -6,6 +6,7 @@ from views import SearchAjaxView
 from views import SearchSubItemView
 from views import CreateSubItemView
 from views import PostMembershipCreateView
+from views import MergePersonView
 from flask import session
 from flask import request
 from flask import redirect
@@ -112,6 +113,10 @@ app.add_url_rule('/persons/create', view_func=CreateView.as_view("person_create"
                                                                        api_key=api_key,
                                                                        form=PersonForm))
 
+app.add_url_rule('/persons/merge', view_func=MergePersonView.as_view("person_merge_view",
+                                                                     entity="persons",
+                                                                     api_key=api_key))
+
 
 
 app.add_url_rule('/search/<entity>', view_func=SearchAjaxView.as_view("search"))
@@ -127,6 +132,8 @@ app.add_url_rule('/persons/<parent_id>/memberships', view_func=SearchSubItemView
                                                                                            parent_entity="persons",
                                                                                            entity="memberships",
                                                                                            template_name="memberships.html"))
+
+
 
 session_opts = {
     "session.type": "cookie",
