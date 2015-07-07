@@ -1,14 +1,16 @@
+{% for area in form.area %}
 <hr>
 <div class="form-group">
-    {{ form.area["id"].label }}
-    {{ form.area["id"](class="form-control") }}
+    {{ area["id"].label }}
+    {{ area["id"](class="form-control") }}
 </div>
 <div class="form-group">
-    {{ form.area["name"].label }}
-    {{ form.area["name"](class="form-control") }}
+    {{ area["name"].label }}
+    {{ area["name"](class="form-control") }}
 </div>
 <div class="form-group">
-    {{ form.area.state.label }}
-    {{ form.area.state(class="form-control") }}
+    {{ area.state.label }}
+    {{ area.state(class="form-control") }}
 </div>
 <hr>
+{% endfor %}

@@ -14,6 +14,7 @@ from forms.merge import MergeForm
 import json
 import const
 import cachecontrol
+import logging
 
 
 # POPIT_ENDPOINT =  "http://sinar-malaysia.popit.mysociety.org/api/v0.1"
@@ -136,6 +137,8 @@ class CreateView(BaseView):
                 status_code, data = self.create_entity(form, language_key=language)
                 if status_code != 200:
                     return self.render_error(error_code=status_code, content=data)
+            else:
+                return self.render_template(self.template_name, form=form)
             return redirect("/%s"% self.entity)
         else:
             form = self.form()

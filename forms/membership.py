@@ -2,6 +2,7 @@ __author__ = 'sweemeng'
 from base import BaseForm
 from wtforms import StringField
 from wtforms import FormField
+from wtforms import FieldList
 from misc import Area
 
 """
@@ -39,7 +40,7 @@ class MembershipForm(BaseForm):
     post = StringField("posts")
     post_id = StringField("Post ID")
     role = StringField("Role")
-    area = FormField(Area)
+    area = FieldList(FormField(Area), max_entries=1)
     start_date = StringField("Start Date")
     end_date = StringField("End Date")
 

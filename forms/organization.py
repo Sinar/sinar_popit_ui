@@ -72,7 +72,7 @@ class OrganizationForms(BaseForm):
     parent = StringField("Parent Organization")
     founding_date = StringField("Founding Date", validators=[Optional(), Regexp("^[0-9]{4}(-[0-9]{2}){0,2}$")])
     dissolution_date = StringField("Dissolution Date", validators=[Optional(), Regexp("^[0-9]{4}(-[0-9]{2}){0,2}$")])
-    area = FormField(Area)
+    area = FieldList(FormField(Area), max_entries=1)
     contact_details = FieldList(FormField(ContactForm))
     links = FieldList(FormField(LinkForm))
 

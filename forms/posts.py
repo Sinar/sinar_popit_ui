@@ -2,6 +2,7 @@ __author__ = 'sweemeng'
 from wtforms import StringField
 from wtforms import DateField
 from wtforms import FormField
+from wtforms import FieldList
 from wtforms.validators import DataRequired
 from base import BaseForm
 from misc import Area
@@ -111,7 +112,7 @@ class PostForm(BaseForm):
     role = StringField("Role")
     organization = StringField("Organization")
     organization_id = StringField("Organization ID", validators=[DataRequired()])
-    area = FormField(Area)
+    area = FieldList(FormField(Area), max_entries=1)
     start_date = StringField("Start Date", validators=[Regexp("^[0-9]{4}(-[0-9]{2}){0,2}$"), Optional()])
     end_date = StringField("End Date", validators=[Regexp("^[0-9]{4}(-[0-9]{2}){0,2}$"), Optional()])
 
