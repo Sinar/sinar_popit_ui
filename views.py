@@ -390,6 +390,19 @@ class CreateSubItemView(CreateView):
 
         return (r.status_code, r.json())
 
+    def clean_form(self, form):
+        key_to_pop = []
+        for key in form.data:
+            if hasattr(form[key], "entries"):
+                if not form[key].entries:
+                    continue
+
+                if not any(form[key].entries[-1].data.values()):
+                    key_to_pop.append(key)
+        for key in key_to_pop:
+            form[key].pop_entry()
+        return form
+
     def dispatch_request(self, parent_id):
         language = session.get("language", "en")
         status_code, data = self.fetch_entity(self.parent_entity, parent_id, language_key=language)
@@ -400,13 +413,17 @@ class CreateSubItemView(CreateView):
         parent_id_key = "%s_id" % parent_key
         init_data = { parent_id_key: parent_id, parent_key: data["result"]["name"]}
         form = self.form.from_json(init_data)
+        form["area"].append_entry({})
+
         if server_request.form:
 
             form = self.form(server_request.form)
+            form = self.clean_form(form)
             if form.validate():
                 status_code, data = self.create_entity(form, language_key=language)
                 if status_code != 200:
                     return self.render_error(error_code=status_code, content=data)
+                return redirect("/%s/edit/%s" % (self.entity, data["result"]["id"]))
             return redirect("/%s" % self.parent_entity)
 
         return self.render_template(self.template_name, form=form)
