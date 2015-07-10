@@ -118,7 +118,7 @@ class CreateView(BaseView):
                 if not any(form.data[key].values()):
                     # Because id is a required field
                     continue
-            elif key in ("organization", "person", "post"):
+            elif key in ("organization", "person", "post", "parent"):
                 continue
             else:
                 data[key] = { language_key: str(form.data[key]) }
@@ -223,7 +223,10 @@ class EditView(BaseView):
                 continue
 
             if key == "area":
-                if not any(form.data[key].values()):
+                logging.warning(form.data[key])
+                if not form.data[key]:
+                    continue
+                if not any(form.data[key][0].values()):
                     continue
 
             if type(form.data[key]) is list:
