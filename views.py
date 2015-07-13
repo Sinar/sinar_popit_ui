@@ -192,7 +192,7 @@ class EditView(BaseView):
         for language in SUPPORTED_LANGUAGE:
             status_code, temp_data = self.fetch_entity(entity, entity_id, language_key=language)
             for field, value in temp_data["result"].items():
-                if field in ("name", "summary", "biography", "description", "label"):
+                if field in ("name", "summary", "description", "label"):
                     temp = data.setdefault(field, {})
                     temp[language] = value
 
@@ -263,7 +263,7 @@ class EditView(BaseView):
             if "id" in key:
                 data[key] = form.data[key]
             else:
-                if key in ("name", "summary", "biography", "description", "label"):
+                if key in ("name", "summary", "description", "label"):
                     data[key] = original_data[key]
                     data[key][language_key] = form.data[key]
                 else:
