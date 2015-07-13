@@ -22,10 +22,6 @@
     <a href="/persons/{{ entity_id }}/memberships/create" class="btn btn-default">Create Membership In Organizations</a>
     <a href="/persons/{{ entity_id }}/memberships" class="btn btn-default">Membership In Organizations</a>
     <form method="post" action="">
-        <div class="form-group">
-            {{ form.language.label }}
-            {{ form.language(class="form-control") }}
-        </div>
         {% if edit %}
         <div class="form-group">
             {{ form.id.label }}
