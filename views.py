@@ -341,7 +341,7 @@ class SearchSubItemView(SearchView):
                 continue
             queries.append("%s:%s" % (key,value))
         url = "%s/search/%s" % (self.POPIT_ENDPOINT, entity)
-        params = { "q": "%".join(queries) }
+        params = { "q": " AND ".join(queries) }
 
         if "page" in kwargs:
             params["page"] = kwargs["page"]
