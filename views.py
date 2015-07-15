@@ -219,7 +219,7 @@ class EditView(BaseView):
 
                 data[key] = original_data[key]
                 data[key][language_key] = form.data[key]
-            if key in ("organization", "person", "post"):
+            if key in ("organization", "person", "post", "parent"):
                 continue
 
             if key == "area":
