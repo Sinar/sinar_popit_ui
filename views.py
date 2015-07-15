@@ -264,7 +264,7 @@ class EditView(BaseView):
                 data[key] = form.data[key]
             else:
                 if key in ("name", "summary", "description", "label"):
-                    data[key] = original_data[key]
+                    data[key] = original_data.get(key, {})
                     data[key][language_key] = form.data[key]
                 else:
                     data[key] = form.data[key]
