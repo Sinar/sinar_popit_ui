@@ -291,7 +291,6 @@ class EditView(BaseView):
     def delete_entity(self, entity, entity_id):
         url = "%s/%s/%s" % (self.POPIT_ENDPOINT, entity, entity_id)
         r = self.session.delete(url, headers=self.headers, verify=False)
-        return r.status_code, r.json()
 
     def dispatch_request(self, entity_id):
 
@@ -307,8 +306,15 @@ class EditView(BaseView):
                 form[key].append_entry({})
 
         if "delete" in server_request.form:
+            if self.entity == "memberships":
+                if self.data["result"].get("post_id"):
+                    redirect_url = "/posts/%s/memberships" % self.data["result"]["post_id"]
+                else:
+                    redirect_url = "/organizations/%s/memberships" % self.data["result"]["organization_id"]
+            else:
+                redirect_url = "/%s" % self.entity
             self.delete_entity(self.entity, entity_id)
-            return redirect("/%s" % self.entity)
+            return redirect(redirect_url)
 
         if server_request.form:
             form = self.form(server_request.form)
@@ -472,6 +478,7 @@ class PostMembershipCreateView(CreateSubItemView):
                 status_code, data = self.create_entity(form)
                 if status_code != 200:
                     return self.render_error(error_code=status_code, content=data)
+                return redirect("/%s/edit/%s" % (self.entity, data["result"]["id"]))
         return self.render_template(self.template_name, form=form, parent_id=parent_id)
 
 
