@@ -4,6 +4,7 @@ from wtforms import StringField
 from wtforms import FormField
 from wtforms import FieldList
 from misc import Area
+from wtforms.validators import DataRequired
 
 """
 {
@@ -34,7 +35,7 @@ from misc import Area
 # Organization ID and Post ID can be derived with post ID
 class MembershipForm(BaseForm):
     person = StringField("Person")
-    person_id = StringField("Person ID")
+    person_id = StringField("Person ID", validators=[DataRequired()])
     organization = StringField("Organizations")
     organization_id = StringField("Organization ID")
     post = StringField("posts")
