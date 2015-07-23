@@ -184,6 +184,9 @@ class EditView(BaseView):
                         data[temp_entity[:-1]] = temp_data["result"]["name"]
                     else:
                         data[temp_entity[:-1]] = temp_data["result"]["label"]
+            if key == "area":
+                temp = data[key]
+                data[key] = [temp]
 
         return (r.status_code, {"result": data})
 
@@ -228,6 +231,9 @@ class EditView(BaseView):
                     continue
                 if not any(form.data[key][0].values()):
                     continue
+                data[key] = form.data[key][0]
+                logging.warn(data[key])
+                continue
 
             if type(form.data[key]) is list:
 
@@ -278,6 +284,8 @@ class EditView(BaseView):
     def clean_form(self, form):
         key_to_pop = []
         for key in form.data:
+            if key == "area":
+                continue
             if hasattr(form[key], "entries"):
                 if not form[key].entries:
                     continue
@@ -301,7 +309,10 @@ class EditView(BaseView):
             return self.render_error(error_code=status_code, content=self.data)
 
         form = self.form.from_json(self.data["result"])
+
         for key in form.data:
+            if key == "area":
+                continue
             if hasattr(form[key], "entries"):
                 form[key].append_entry({})
 
@@ -327,6 +338,7 @@ class EditView(BaseView):
                 if status_code != 200:
                     return self.render_error(error_code=status_code, content=data)
                 return redirect("/%s/edit/%s" % (self.entity, entity_id))
+
 
         return self.render_template(self.template_name, form=form, data=self.data["result"], edit=True, entity_id=entity_id)
 
