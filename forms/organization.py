@@ -64,6 +64,7 @@ from wtforms.validators import Optional
 }
 """
 class OrganizationForms(BaseForm):
+    image = StringField("Image", validators=[Optional()])
     name = StringField("Name", validators=[DataRequired()])
     other_names = FieldList(FormField(OtherNameForm))
     identifiers = FieldList(FormField(IdentifiersForm))

@@ -10,6 +10,7 @@ from wtforms import DateField
 from wtforms import SelectField
 from wtforms import FieldList
 from wtforms import FormField
+from wtforms import FileField
 from wtforms.validators import DataRequired
 from wtforms.validators import Regexp
 from wtforms.validators import Email
@@ -174,6 +175,8 @@ from wtforms.validators import Optional
 
 """
 class PersonForm(BaseForm):
+    # Make life easy. In popolo, image field is a string field anyway
+    image = StringField("Image", validators=[Optional()])
     name = StringField("Name", validators=[DataRequired()])
     other_names = FieldList(FormField(OtherNameForm))
     identifiers = FieldList(FormField(IdentifiersForm))
