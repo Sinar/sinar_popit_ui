@@ -166,6 +166,10 @@ class EditView(BaseView):
         data = r.json()["result"]
 
         for key, value in data.items():
+            if key == "area":
+                temp = data[key]
+                data[key] = [temp]
+                continue
             if "_id" in key:
                 if key == "parent_id":
                     if value:
@@ -184,9 +188,7 @@ class EditView(BaseView):
                         data[temp_entity[:-1]] = temp_data["result"]["name"]
                     else:
                         data[temp_entity[:-1]] = temp_data["result"]["label"]
-            if key == "area":
-                temp = data[key]
-                data[key] = [temp]
+
 
         return (r.status_code, {"result": data})
 
