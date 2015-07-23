@@ -171,12 +171,15 @@ class EditView(BaseView):
                 data[key] = [temp]
                 continue
             if "_id" in key:
+
                 if key == "parent_id":
                     if value:
                         status, temp_data = self.fetch_entity("organizations", value, language_key=language_key)
 
                         if status == 200:
                             data["parent"] = temp_data["result"]["name"]
+                elif key == "area_id":
+                    continue
                 else:
 
                     temp_entity, temp_id = key.split("_")
