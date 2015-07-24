@@ -34,7 +34,8 @@
         </div>
         <div class="form-group">
             {{ form.person_id.label }}
-            {{ form.person_id(class="form-control") }}
+            {{ form.person_id(class="form-control", **{"aria-describedby":"person_id_help"}) }}
+            <span id="person_id_help" class="help-block"></span>
         </div>
         <div class="form-group">
             {{ form.organization.label }}
@@ -42,7 +43,8 @@
         </div>
         <div class="form-group">
             {{ form.organization_id.label }}
-            {{ form.organization_id(class="form-control") }}
+            {{ form.organization_id(class="form-control", **{"aria-describedby":"organization_id_help"}) }}
+            <span id="organization_id_help" class="help-block"></span>
         </div>
         <div class="form-group">
             {{ form.post.label }}
@@ -50,7 +52,8 @@
         </div>
         <div class="form-group">
             {{ form.post_id.label }}
-            {{ form.post_id(class="form-control") }}
+            {{ form.post_id(class="form-control", **{"aria-describedby":"post_id_help"}) }}
+            <span id="post_id_help" class="help-block"></span>
         </div>
         <div class="form-group">
             {{ form.role.label }}
@@ -120,6 +123,7 @@
                     source: organizations.ttAdapter()
                 }).on("typeahead:selected", function(obj, datum, name){
                     $("#organization_id").val(datum.id);
+                    $("#organization_id_help").html("<a href=\"/organizations/edit/"+datum.id+"\">Person</a>");
                     console.log(datum.id);
                 });
 
@@ -133,6 +137,7 @@
                     source: persons.ttAdapter()
                 }).on("typeahead:selected", function(obj, datum, name){
                     $("#person_id").val(datum.id);
+                    $("#person_id_help").html("<a href=\"/persons/edit/"+datum.id+"\">"+"Persons Page"+"</a>");
                     console.log(datum.id);
                 });
         $("#post").typeahead({
@@ -145,9 +150,32 @@
                     source: posts.ttAdapter()
                 }).on("typeahead:selected", function(obj, datum, name){
                     $("#post_id").val(datum.id);
+                    $("#post_id_help").html("<a href=\"/posts/edit/"+datum.id+"\">Post page</a>");
                     console.log(datum.id);
-                })
+                });
+        var     person_id = $("#person_id").val(),
+                organization_id = $("#organization_id").val(),
+                post_id = $("#post_id").val();
         $('.tt-menu').css('background-color','#fff');
+        $("#person_id_help").html("<a href=\"/persons/edit/"+person_id+"\">Person Page</a>");
+        $("#organization_id_help").html("<a href=\"/organizations/edit/"+organization_id+"\">Organization Page</a>");
+        $("#post_id_help").html("<a href=\"/posts/edit/"+post_id+"\">Posts Page</a>");
+        $("#person_id").change(function(){
+            person_id = $(this).val();
+            $("#person_id_help").html("<a href=\"/persons/edit/"+person_id+"\">Person Page</a>");
+        });
+
+        $("#organization_id").change(function(){
+            organization_id = $(this).val();
+            $("#organization_id_help").html("<a href=\"/organizations/edit/"+organization_id+"\">Organization Page</a>");
+        });
+
+        $("#post_id").change(function(){
+            post_id = $(this).val();
+            $("#post_id_help").html("<a href=\"/posts/edit/"+post_id+"\">Posts Page</a>");
+
+        });
+
     });
     </script>
 {% endblock %}
