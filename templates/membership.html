@@ -21,11 +21,13 @@
     class MembershipEditForm(MembershipForm):
         id = StringField("PopIt ID")
     -->
-    {% if data["organization_id"] %}
-        <a href="/organizations/edit/{{ data['organization_id'] }}" class="btn btn-default">Go to Organization</a>
-    {% endif %}
-    {% if data["person_id"] %}
-        <a href="/persons/edit/{{ data['person_id'] }}" class="btn btn-default">Go to Persons</a>
+    {% if data %}
+        {% if data["organization_id"] %}
+            <a href="/organizations/edit/{{ data['organization_id'] }}" class="btn btn-default">Go to Organization</a>
+        {% endif %}
+        {% if data["person_id"] %}
+            <a href="/persons/edit/{{ data['person_id'] }}" class="btn btn-default">Go to Persons</a>
+        {% endif %}
     {% endif %}
     <form method="post" action="">
         {% if edit %}
