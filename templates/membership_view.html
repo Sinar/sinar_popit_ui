@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}{% if edit %}{{ data.name }}{% else %}Create New organization{% endif %}{% endblock %}
+{% block extra_css %}
+    <link rel="stylesheet" href="/static/typeaheadjs.css">
+
+{% endblock %}
+{% block content %}
+    <!-- TODO: Link to the right entity-->
+    {% if data["organization_id"] %}
+        <a href="/organizations/{{ data['organization_id'] }}" class="btn btn-default">Go to Organization</a>
+    {% endif %}
+    {% if data["person_id"] %}
+        <a href="/persons/{{ data['person_id'] }}" class="btn btn-default">Go to Persons</a>
+    {% endif %}
+    <dl>
+        <dt>Person</dt>
+        <dd>{{ data.person }}</dd>
+        <dt>Person ID</dt>
+        <dd>{{ data.person_id }}</dd>
+        <dt>Organization</dt>
+        <dd>{{ data.organization }}</dd>
+        <dt>Organization id</dt>
+        <dd>{{ data.organization_id }}</dd>
+        <dt>Post</dt>
+        <dd>{{ data.post }}</dd>
+        <dt>Post ID</dt>
+        <dd>{{ data.post_id }}</dd>
+        <dt>Role</dt>
+        <dd>{{ data.role }}</dd>
+        {% include "area_views.html" %}
+        <dt>Start Date</dt>
+        <dd>{{ data.start_date }}</dd>
+        <dt>End Date</dt>
+        <dd>{{ data.end_date }}</dd>
+    </dl>
+
+{% endblock %}

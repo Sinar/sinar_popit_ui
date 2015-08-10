@@ -1,0 +1,18 @@
+
+<dt>Other Name</dt>
+<dd>
+<hr>
+{% for other_name in data.other_names %}
+    <dl>
+        <dt>Name</dt>
+        <dd>{{ other_name["name"] }}</dd>
+        <dt>Start Date</dt>
+        <dd>{{ other_name.start_date }}</dd>
+        <dt>End Date</dt>
+        <dd>{{ other_name.end_date }}</dd>
+        <dt>Note</dt>
+        <dd>{{ other_name.note }}</dd>
+    </dl>
+    <hr>
+{% endfor %}
+</dd>

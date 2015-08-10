@@ -7,6 +7,7 @@ from views import SearchSubItemView
 from views import CreateSubItemView
 from views import PostMembershipCreateView
 from views import MergePersonView
+from views import SingleItemView
 from flask import session
 from flask import request
 from flask import redirect
@@ -132,6 +133,22 @@ app.add_url_rule('/persons/<parent_id>/memberships', view_func=SearchSubItemView
                                                                                            parent_entity="persons",
                                                                                            entity="memberships",
                                                                                            template_name="memberships.html"))
+
+app.add_url_rule('/persons/<entity_id>', view_func=SingleItemView.as_view("persons_views",
+                                                                          entity="persons",
+                                                                          template_name="person_view.html"))
+
+app.add_url_rule('/organizations/<entity_id>', view_func=SingleItemView.as_view("organizations_views",
+                                                                          entity="organizations",
+                                                                          template_name="organization_view.html"))
+
+app.add_url_rule('/memberships/<entity_id>', view_func=SingleItemView.as_view("memberships_views",
+                                                                          entity="memberships",
+                                                                          template_name="membership_view.html"))
+
+app.add_url_rule('/posts/<entity_id>', view_func=SingleItemView.as_view("posts_views",
+                                                                          entity="posts",
+                                                                          template_name="post_view.html"))
 
 
 

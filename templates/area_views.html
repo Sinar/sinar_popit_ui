@@ -1,0 +1,16 @@
+<dt>Area</dt>
+<dd>
+    <hr>
+        {% if data.area %}
+        <dl>
+            <dt>ID</dt>
+            <dd>{{ data.area["id"] }}</dd>
+            <dt>Name</dt>
+            <dd>{{ data.area["name"] }}</dd>
+            <dt>State</dt>
+            <dd>{{ data.area.state }}</dd>
+        </dl>
+        {% endif %}
+
+    <hr>
+</dd>

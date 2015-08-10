@@ -44,6 +44,23 @@ class BaseView(View):
         return render_template(self.template_name, **kwargs)
 
 
+class SingleItemView(BaseView):
+    decorators = []
+    def fetch_entity(self, entity, entity_id, language_key="en"):
+        url = "%s/%s/%s" % (POPIT_ENDPOINT, entity, entity_id)
+        headers = { "Accept-Language": language_key }
+        r = self.session.get(url, headers=headers)
+        return r.status_code, r.json()["result"]
+
+
+    def dispatch_request(self, entity_id):
+        language = session.get("language", "en")
+        status_code, data = self.fetch_entity(self.entity, entity_id, language_key=language)
+        if status_code != 200:
+            return self.render_error(error_code=status_code, content=data)
+        return self.render_template(data=data, entity_id=entity_id)
+
+
 class ListView(BaseView):
 
     def fetch_entity(self, entity, page=0, language_key="en"):
@@ -66,6 +83,7 @@ class ListView(BaseView):
 
 
 class SearchView(ListView):
+    decorators = []
     def search_entity(self, entity, key, value, page=0, language_key="en"):
         headers = { "Accept-Language": language_key }
         url = "%s/search/%s" % (self.POPIT_ENDPOINT, entity)
@@ -89,7 +107,7 @@ class SearchView(ListView):
         status_code, data = self.fetch_entity(self.entity, page=page)
         if status_code != 200:
             return self.render_error(status_code, data)
-        return self.render_template(data=data)
+        return self.render_template(self.template_name, data=data)
 
 
 class CreateView(BaseView):
@@ -349,6 +367,7 @@ class EditView(BaseView):
 
 
 class SearchSubItemView(SearchView):
+    decorators = []
     def __init__(self, parent_entity, entity, template_name):
         super(SearchSubItemView,self).__init__(entity, template_name)
         self.parent_entity = parent_entity

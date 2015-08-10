@@ -1,0 +1,15 @@
+<dt>Links</dt>
+<dd>
+<hr>
+
+{% for links in data.links %}
+    <dl>
+        <dt>URL</dt>
+        <dd>{{ links.url }}</dd>
+        <dt>Notes</dt>
+        <dd>{{ links.note }}</dd>
+    </dl>
+    <hr>
+
+{% endfor %}
+</dd>

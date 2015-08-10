@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}{{ data.name }}{% endblock %}
+{% block extra_css %}
+    <link rel="stylesheet" href="/static/typeaheadjs.css">
+
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <!-- Link to child object -->
+        {% if current_user.is_authenticated() %}
+            <a href="/organizations/edit/{{ entity_id }}" class="btn btn-default">Edit Organization</a>
+        {% endif %}
+        <a href="/organizations/{{ entity_id }}/posts" class="btn btn-default">Post In Organizations</a>
+        {% if current_user.is_authenticated() %}
+            <a href="/organizations/{{ entity_id }}/posts/create" class="btn btn-default">Create Post In Organizations</a>
+            <a href="/organizations/{{ entity_id }}/memberships/create" class="btn btn-default">Create Membership In Organizations</a>
+        {% endif %}
+
+        <a href="/organizations/{{ entity_id }}/memberships" class="btn btn-default">Membership In Organizations</a>
+
+        <div id="image"><img src="{{data.image }}"></div>
+        <dl>
+            <dt>Name</dt>
+            <dd>{{ data.name }}</dd>
+            {% include "other_names_views.html" %}
+
+            {% include "identifiers_view.html" %}
+
+            {% include "area_views.html" %}
+            <dt>Classification</dt>
+            <dd>{{ data.classification }}</dd>
+            <dt>Parent ID</dt>
+            <dd>{{ data.parent_id }}</dd>
+            <dt>Parent Org</dt>
+            <dd>{{ data.parent }}</dd>
+            <dt>Founding Date</dt>
+            <dd>{{ data.founding_date }}</dd>
+            <dt>Dissolution Date</dt>
+            <dd>{{ data.dissolution }}</dd>
+            {% include "contact_details_view.html" %}
+            {% include "links_views.html" %}
+
+        </dl>
+    </div>
+
+
+{% endblock %}

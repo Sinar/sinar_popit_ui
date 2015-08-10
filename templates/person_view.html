@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}{% if edit %}{{ data.name }}{% else %}{{ data.name }}{% endif %}{% endblock %}
+{% block extra_css %}
+    <link rel="stylesheet" href="/static/typeaheadjs.css">
+
+{% endblock %}
+{% block content %}
+    <!-- TODO: login required -->
+    {% if current_user.is_authenticated() %}
+        <a href="/persons/edit/{{ entity_id }}" class="btn btn-default">Edit Person</a>
+        <a href="/persons/{{ entity_id }}/memberships/create" class="btn btn-default">Create Membership In Organizations</a>
+    {% endif %}
+    <!-- TODO end login required -->
+    <a href="/persons/{{ entity_id }}/memberships" class="btn btn-default">Membership In Organizations</a>
+    <div id="image"><img src="{{ data.image }}"/></div>
+    <dl>
+        <dt>Name</dt>
+        <dd>{{ data.name }}</dd>
+        {% include "other_names_views.html" %}
+        {% include "identifiers_view.html" %}
+        <dt>Email</dt>
+        <dd>{{ data.email }}</dd>
+        <dt>Gender</dt>
+        <dd>{{ data.gender }}</dd>
+        <dt>Birth Date</dt>
+        <dd>{{ data.birth_date }}</dd>
+        <dt>Dead Date</dt>
+        <dd>{{ data.dead_date }}</dd>
+        <dt>Summary</dt>
+        <dd>{{ data.summary }}</dd>
+        {% include "contact_details_view.html" %}
+
+    </dl>
+
+    {% include "links_views.html" %}
+
+{% endblock %}

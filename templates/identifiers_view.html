@@ -1,0 +1,13 @@
+<dt>Identifiers</dt>
+<hr>
+
+<dd>
+{% for identifier in data.identifiers %}
+    <dl>
+        <dd>{{ identifier.identifier }}</dd>
+        <dd>{{ identifier.schema }}</dd>
+    </dl>
+    <hr>
+
+{% endfor %}
+</dd>

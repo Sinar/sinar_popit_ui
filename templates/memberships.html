@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Posts{% endblock %}
+{% block title %}Memberships{% endblock %}
 {% block content %}
     <form class="form-inline" method="get" action="">
         <div class="form-group">
@@ -19,30 +19,30 @@
                 {% if parent_entity == "persons" %}
                     {% if result.post %}
                         <tr>
-                            <td><a href="/memberships/edit/{{ result.id }}">{{ result.post.label }} for {{ result.organization.name }}</a></td>
+                            <td><a href="/memberships/{{ result.id }}">{{ result.post.label }} for {{ result.organization.name }}</a></td>
                         </tr>
                     {% else %}
                         <tr>
-                            <td><a href="/memberships/edit/{{ result.id }}">Member of {{ result.organization.name }}</a></td>
+                            <td><a href="/memberships/{{ result.id }}">Member of {{ result.organization.name }}</a></td>
                         </tr>
                     {% endif %}
                 {% elif parent_entity == "organizations" %}
                     {% if result.post %}
                         <tr>
-                            <td><a href="/memberships/edit/{{ result.id }}">{{ result.person.name }} as {{ result.post.label }}</a></td>
+                            <td><a href="/memberships/{{ result.id }}">{{ result.person.name }} as {{ result.post.label }}</a></td>
                         </tr>
                     {% else %}
                         <tr>
-                            <td><a href="/memberships/edit/{{ result.id }}">{{ result.person.name }} </a></td>
+                            <td><a href="/memberships/{{ result.id }}">{{ result.person.name }} </a></td>
                         </tr>
                     {% endif %}
                 {% elif parent_entity == "posts" %}
                     <tr>
-                        <td><a href="/memberships/edit/{{ result.id }}">{{ result.person.name }}</a></td>
+                        <td><a href="/memberships/{{ result.id }}">{{ result.person.name }}</a></td>
                     </tr>
                 {% else %}
                     <tr>
-                        <td><a href="/memberships/edit/{{ result.id }}">{{ result.role }}</a></td>
+                        <td><a href="/memberships/{{ result.id }}">{{ result.role }}</a></td>
                     </tr>
                 {% endif %}
             {% endfor %}

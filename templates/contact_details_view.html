@@ -1,0 +1,14 @@
+<dt>Contact Details:</dt>
+<dd>
+    <hr>
+
+    {% for contacts in data.contact_details %}
+        <dl>
+            <dd>{{ contacts["type"] }}</dd>
+            <dd>{{ contacts["label"] }}</dd>
+            <dd>{{ contacts.value }}</dd>
+        </dl>
+        <hr>
+
+    {% endfor %}
+</dd>

@@ -18,7 +18,7 @@
         <tbody>
             {% for result in data.result %}
             <tr>
-                <td><a href="/posts/edit/{{ result.id }}">{{ result.label }}</a></td>
+                <td><a href="/posts/{{ result.id }}">{{ result.label }}</a></td>
             </tr>
             {% endfor %}
         </tbody>
