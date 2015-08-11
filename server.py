@@ -11,9 +11,12 @@ from views import SingleItemView
 from flask import session
 from flask import request
 from flask import redirect
+from flask import render_template
 from flask.sessions import SessionInterface
 from flask_login import LoginManager
 from flask.ext.security import Security, SQLAlchemyUserDatastore, login_required
+from flask.ext.security.signals import user_registered
+from flask.ext.security import roles_required
 from forms.organization import OrganizationEditForms
 from forms.organization import OrganizationForms
 from forms.posts import PostEditForm
@@ -22,13 +25,15 @@ from forms.membership import MembershipForm
 from forms.membership import MembershipEditForm
 from forms.person import PersonForm
 from forms.person import PersonEditForm
+from forms.approval import ApprovalForm
 from beaker.middleware import SessionMiddleware
 import const
 from app import app
 from db import User
 from db import Role
 from app import db
-
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
 
 
@@ -180,13 +185,53 @@ def set_language(language_code):
 def logged_in():
     return "logged in"
 
+
+@app.route("/approval", methods=["GET", "POST"])
+@roles_required("admin")
+def approve_user():
+    form = ApprovalForm(request.form)
+    users = User.query.all()
+    choices = []
+    for user in users:
+        if not user.has_role("admin"):
+            choices.append((user.id, user.email))
+    form.users.choices = choices
+    if request.form:
+
+        if form.validate():
+            print form.users.data
+            user = User.query.filter_by(id=form.users.data).first()
+            admin = user_datastore.find_role("admin")
+            user_datastore.add_role_to_user(user, admin)
+            db.session.commit()
+            # Because I am lazy to reinit the list
+            return redirect("/approval")
+
+    return render_template("approve_user.html", form=form)
+
+@app.route("/unauthorized")
+def unauthorized():
+    return render_template("unauthorized.html")
+
+@user_registered.connect_via(app)
+def assign_user_role(app, user, confirm_token):
+    user_role = user_datastore.find_role("user")
+    user_datastore.add_role_to_user(user, user_role)
+    db.session.commit()
+
 @app.before_first_request
 def create_user():
     db.create_all()
-    if not user_datastore.find_user(email=const.admin_name):
-        user_datastore.create_user(email=const.admin_name, password=const.admin_pass)
-        db.session.commit()
+    admin = user_datastore.find_or_create_role("admin")
+    user_datastore.find_or_create_role("user")
 
+    user = user_datastore.find_user(email=const.admin_name)
+    if not user:
+        user = user_datastore.create_user(email=const.admin_name, password=const.admin_pass)
+
+    if not user.has_role(admin):
+        user_datastore.add_role_to_user(user, admin)
+    db.session.commit()
 
 
 if __name__ == "__main__":

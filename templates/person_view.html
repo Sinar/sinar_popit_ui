@@ -5,12 +5,9 @@
 
 {% endblock %}
 {% block content %}
-    <!-- TODO: login required -->
-    {% if current_user.is_authenticated() %}
-        <a href="/persons/edit/{{ entity_id }}" class="btn btn-default">Edit Person</a>
-        <a href="/persons/{{ entity_id }}/memberships/create" class="btn btn-default">Create Membership In Organizations</a>
-    {% endif %}
-    <!-- TODO end login required -->
+    <a href="/persons/edit/{{ entity_id }}" class="btn btn-default">Edit Person</a>
+    <a href="/persons/{{ entity_id }}/memberships/create" class="btn btn-default">Create Membership In Organizations</a>
+
     <a href="/persons/{{ entity_id }}/memberships" class="btn btn-default">Membership In Organizations</a>
     <div id="image"><img src="{{ data.image }}"/></div>
     <dl>

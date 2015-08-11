@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Approve user{% endblock %}
+{% block extra_css %}
+    <link rel="stylesheet" href="/static/typeaheadjs.css">
+
+{% endblock %}
+{% block content %}
+    <form method="post" action="">
+        <div class="form-group">
+            {{ form.users.label }}
+            {{ form.users }}
+        </div>
+        <button type="submit" class="btn btn-primary" name="save" value="save">Save</button>
+
+    </form>
+{% endblock %}

@@ -7,6 +7,7 @@ from flask import Response
 from flask import redirect
 from flask import session
 from flask_security import login_required
+from flask_security import roles_required
 import requests
 from forms.base import BaseForm
 from forms.membership import MembershipForm
@@ -23,7 +24,7 @@ SUPPORTED_LANGUAGE = ["ms", "en"]
 
 class BaseView(View):
     POPIT_ENDPOINT =  POPIT_ENDPOINT
-    decorators = [login_required]
+    decorators = [ roles_required("admin") ]
     def __init__(self, entity, template_name):
         self.template_name = template_name
         self.entity = entity
@@ -101,7 +102,7 @@ class SearchView(ListView):
         if search_key:
             status_code, data = self.search_entity(self.entity, "name", search_key, page=page)
             if status_code != 200:
-                return self.render_error(status_code, error_code=status_code, content=data)
+                return self.render_error(error_code=status_code, content=data)
             return self.render_template(data=data, search_key=search_key)
 
         status_code, data = self.fetch_entity(self.entity, page=page)
