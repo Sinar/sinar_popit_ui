@@ -50,7 +50,7 @@ class SingleItemView(BaseView):
     def fetch_entity(self, entity, entity_id, language_key="en"):
         url = "%s/%s/%s" % (POPIT_ENDPOINT, entity, entity_id)
         headers = { "Accept-Language": language_key }
-        r = self.session.get(url, headers=headers)
+        r = self.session.get(url, headers=headers, verify=False)
         return r.status_code, r.json()["result"]
 
 
