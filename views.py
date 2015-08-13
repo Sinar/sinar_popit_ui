@@ -63,7 +63,8 @@ class SingleItemView(BaseView):
 
 
 class ListView(BaseView):
-
+    decorators = []
+    edit = False
     def fetch_entity(self, entity, page=0, language_key="en"):
         url = "%s/%s" % (self.POPIT_ENDPOINT, entity)
 
@@ -79,12 +80,18 @@ class ListView(BaseView):
         language = session.get("language", "en")
         status_code, data = self.fetch_entity(self.entity, language_key=language)
         if status_code != 200:
-            return self.render_error(status_code, error_code=status_code, content=data)
-        return self.render_template(data=data)
+            return self.render_error(error_code=status_code, content=data)
+        return self.render_template(data=data, edit=self.edit)
+
+
+class ListEditView(BaseView):
+    decorators = [ roles_required("admin") ]
+    edit = True
 
 
 class SearchView(ListView):
     decorators = []
+    edit = False
     def search_entity(self, entity, key, value, page=0, language_key="en"):
         headers = { "Accept-Language": language_key }
         url = "%s/search/%s" % (self.POPIT_ENDPOINT, entity)
@@ -108,7 +115,12 @@ class SearchView(ListView):
         status_code, data = self.fetch_entity(self.entity, page=page)
         if status_code != 200:
             return self.render_error(status_code, data)
-        return self.render_template(self.template_name, data=data)
+        return self.render_template(self.template_name, data=data, edit=self.edit)
+
+
+class SearchEditView(SearchView):
+    decorators = [ roles_required("admin") ]
+    edit = True
 
 
 class CreateView(BaseView):
@@ -369,6 +381,7 @@ class EditView(BaseView):
 
 class SearchSubItemView(SearchView):
     decorators = []
+    edit = False
     def __init__(self, parent_entity, entity, template_name):
         super(SearchSubItemView,self).__init__(entity, template_name)
         self.parent_entity = parent_entity
@@ -414,7 +427,13 @@ class SearchSubItemView(SearchView):
         # Because parent_id do not link back to child and vice versa
         status_code, data = self.search_entity(self.entity, **query)
 
-        return self.render_template(data=data, search_key=search_key, parent_id=parent_id, parent_entity=self.parent_entity)
+        return self.render_template(data=data, search_key=search_key, parent_id=parent_id, parent_entity=self.parent_entity,
+                                    edit=self.edit)
+
+
+class SearchSubItemEditView(SearchSubItemView):
+    decorators = [ roles_required("admin") ]
+    edit = True
 
 
 class CreateSubItemView(CreateView):

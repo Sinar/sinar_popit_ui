@@ -18,10 +18,10 @@
         class OrganizationEditForms(OrganizationForms):
             org_id = StringField("Organization ID")
     -->
-    <a href="/organizations/{{ entity_id }}/posts" class="btn btn-default">Post In Organizations</a>
+    <a href="/organizations/{{ entity_id }}/posts/edit" class="btn btn-default">Post In Organizations</a>
     <a href="/organizations/{{ entity_id }}/posts/create" class="btn btn-default">Create Post In Organizations</a>
     <a href="/organizations/{{ entity_id }}/memberships/create" class="btn btn-default">Create Membership In Organizations</a>
-    <a href="/organizations/{{ entity_id }}/memberships" class="btn btn-default">Membership In Organizations</a>
+    <a href="/organizations/{{ entity_id }}/memberships/edit" class="btn btn-default">Membership In Organizations</a>
 
     <form method="post" action="">
 

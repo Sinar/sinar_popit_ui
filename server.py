@@ -8,6 +8,8 @@ from views import CreateSubItemView
 from views import PostMembershipCreateView
 from views import MergePersonView
 from views import SingleItemView
+from views import SearchSubItemEditView
+from views import SearchEditView
 from flask import session
 from flask import request
 from flask import redirect
@@ -49,6 +51,10 @@ security = Security(app, user_datastore)
 
 app.add_url_rule('/organizations', view_func=SearchView.as_view("organizations", entity="organizations",
                                                                 template_name="organizations.html"))
+
+app.add_url_rule('/organizations/edit', view_func=SearchEditView.as_view("organizations_edit", entity="organizations",
+                                                                template_name="organizations.html"))
+
 app.add_url_rule('/organizations/edit/<entity_id>', view_func=EditView.as_view("organization_edit",
                                                                                   entity="organizations",
                                                                                   template_name="organization.html",
@@ -60,6 +66,11 @@ app.add_url_rule('/organizations/create', view_func=CreateView.as_view("organiza
                                                                        api_key=api_key,
                                                                        form=OrganizationForms))
 app.add_url_rule('/organizations/<parent_id>/posts', view_func=SearchSubItemView.as_view("posts",
+                                                                                           parent_entity="organizations",
+                                                                                           entity="posts",
+                                                                                           template_name="posts.html"))
+
+app.add_url_rule('/organizations/<parent_id>/posts', view_func=SearchSubItemEditView.as_view("posts_list_edit",
                                                                                            parent_entity="organizations",
                                                                                            entity="posts",
                                                                                            template_name="posts.html"))
@@ -83,10 +94,21 @@ app.add_url_rule('/posts/<parent_id>/memberships', view_func=SearchSubItemView.a
                                                                                            entity="memberships",
                                                                                            template_name="memberships.html"))
 
+app.add_url_rule('/posts/<parent_id>/memberships/edits', view_func=SearchSubItemEditView.as_view("post_membership_list_edit",
+                                                                                           parent_entity="posts",
+                                                                                           entity="memberships",
+                                                                                           template_name="memberships.html"))
+
 app.add_url_rule('/organizations/<parent_id>/memberships', view_func=SearchSubItemView.as_view("organizations_membership_list",
                                                                                            parent_entity="organizations",
                                                                                            entity="memberships",
                                                                                            template_name="memberships.html"))
+
+app.add_url_rule('/organizations/<parent_id>/memberships/edits', view_func=SearchSubItemEditView.as_view("organizations_membership_list_edit",
+                                                                                           parent_entity="organizations",
+                                                                                           entity="memberships",
+                                                                                           template_name="memberships.html"))
+
 
 app.add_url_rule('/posts/<parent_id>/memberships/create', view_func=PostMembershipCreateView.as_view("post_membership_create",
                                                                                                      template_name="membership.html",
@@ -108,6 +130,9 @@ app.add_url_rule('/memberships/edit/<entity_id>', view_func=EditView.as_view("me
 
 app.add_url_rule('/persons', view_func=SearchView.as_view("persons", entity="persons",
                                                                 template_name="persons.html"))
+
+app.add_url_rule('/persons/edit', view_func=SearchEditView.as_view("persons_edit", entity="persons", template_name="persons.html"))
+
 app.add_url_rule('/persons/edit/<entity_id>', view_func=EditView.as_view("person_edit",
                                                                                   entity="persons",
                                                                                   template_name="person.html",

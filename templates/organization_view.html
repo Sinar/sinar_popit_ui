@@ -7,11 +7,7 @@
 {% block content %}
     <div class="container">
 
-        <a href="/organizations/edit/{{ entity_id }}" class="btn btn-default">Edit Organization</a>
         <a href="/organizations/{{ entity_id }}/posts" class="btn btn-default">Post In Organizations</a>
-        <a href="/organizations/{{ entity_id }}/posts/create" class="btn btn-default">Create Post In Organizations</a>
-        <a href="/organizations/{{ entity_id }}/memberships/create" class="btn btn-default">Create Membership In Organizations</a>
-
         <a href="/organizations/{{ entity_id }}/memberships" class="btn btn-default">Membership In Organizations</a>
 
         <div id="image"><img src="{{data.image }}"></div>

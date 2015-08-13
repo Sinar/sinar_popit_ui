@@ -19,30 +19,54 @@
                 {% if parent_entity == "persons" %}
                     {% if result.post %}
                         <tr>
-                            <td><a href="/memberships/{{ result.id }}">{{ result.post.label }} for {{ result.organization.name }}</a></td>
+                            {% if edit %}
+                                <td><a href="/memberships/edit/{{ result.id }}">{{ result.post.label }} for {{ result.organization.name }}</a></td>
+                            {% else %}
+                                <td><a href="/memberships/{{ result.id }}">{{ result.post.label }} for {{ result.organization.name }}</a></td>
+                            {% endif %}
                         </tr>
                     {% else %}
                         <tr>
-                            <td><a href="/memberships/{{ result.id }}">Member of {{ result.organization.name }}</a></td>
+                            {% if edit %}
+                                <td><a href="/memberships/edit/{{ result.id }}">Member of {{ result.organization.name }}</a></td>
+                            {% else %}
+                                <td><a href="/memberships/{{ result.id }}">Member of {{ result.organization.name }}</a></td>
+                            {% endif %}
                         </tr>
                     {% endif %}
                 {% elif parent_entity == "organizations" %}
                     {% if result.post %}
                         <tr>
-                            <td><a href="/memberships/{{ result.id }}">{{ result.person.name }} as {{ result.post.label }}</a></td>
+                            {% if edit %}
+                                <td><a href="/memberships/edit/{{ result.id }}">{{ result.person.name }} as {{ result.post.label }}</a></td>
+                            {% else %}
+                                <td><a href="/memberships/{{ result.id }}">{{ result.person.name }} as {{ result.post.label }}</a></td>
+                            {% endif %}
                         </tr>
                     {% else %}
                         <tr>
-                            <td><a href="/memberships/{{ result.id }}">{{ result.person.name }} </a></td>
+                            {% if edit %}
+                                <td><a href="/memberships/edit/{{ result.id }}">{{ result.person.name }} as {{ result.post.label }}</a></td>
+                            {% else %}
+                                <td><a href="/memberships/{{ result.id }}">{{ result.person.name }} as {{ result.post.label }}</a></td>
+                            {% endif %}
                         </tr>
                     {% endif %}
                 {% elif parent_entity == "posts" %}
                     <tr>
-                        <td><a href="/memberships/{{ result.id }}">{{ result.person.name }}</a></td>
+                        {% if edit %}
+                            <td><a href="/memberships/edit/{{ result.id }}">{{ result.person.name }} as {{ result.post.label }}</a></td>
+                        {% else %}
+                            <td><a href="/memberships/{{ result.id }}">{{ result.person.name }} as {{ result.post.label }}</a></td>
+                        {% endif %}
                     </tr>
                 {% else %}
                     <tr>
-                        <td><a href="/memberships/{{ result.id }}">{{ result.role }}</a></td>
+                        {% if edit %}
+                            <td><a href="/memberships/edit/{{ result.id }}">{{ result.role }}</a></td>
+                        {% else %}
+                            <td><a href="/memberships/{{ result.id }}">{{ result.role }}</a></td>
+                        {% endif %}
                     </tr>
                 {% endif %}
             {% endfor %}
