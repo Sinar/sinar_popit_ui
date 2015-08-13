@@ -210,6 +210,11 @@ def set_language(language_code):
 def logged_in():
     return "logged in"
 
+@app.route("/edit")
+@roles_required("admin")
+def set_editmode():
+    return redirect("/organizations/edit")
+
 
 @app.route("/approval", methods=["GET", "POST"])
 @roles_required("admin")

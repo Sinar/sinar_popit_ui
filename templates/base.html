@@ -32,13 +32,20 @@
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            <li><a href="/organizations">Organizations</a></li>
-            <li><a href="/persons">Person</a></li>
-            <li><a href="/persons/merge">Merge Person</a> </li>
-            {% if current_user.has_role("admin") %}<li><a href="/approval">Approve User</a></li>
-            {% else %}<li><a href="/register">Register Admin</a></li>{% endif %}
-            {% if current_user.is_authenticated() %}<li><a href="/login">Login</a></li>{% else %}
-            <li><a href="/logout">Logout</a></li>{% endif %}
+            {% if edit %}
+                <li><a href="/organizations/edit">Organizations</a></li>
+                <li><a href="/persons/edit">Person</a></li>
+                <li><a href="/persons/merge">Merge Person</a> </li>
+                {% if current_user.has_role("admin") %}<li><a href="/approval">Approve User</a></li>
+                {% else %}<li><a href="/register">Register Admin</a></li>{% endif %}
+                {% if current_user.is_authenticated() %}<li><a href="/login">Login</a></li>{% else %}
+                    <li><a href="/logout">Logout</a></li>{% endif %}
+            {% else %}
+                <li><a href="/organizations">Organizations</a></li>
+                <li><a href="/persons">Person</a></li>
+            {% endif %}
+
+
           </ul>
           <ul class="nav navbar-nav navbar-right">
             {% if session["language"] == "en" %}

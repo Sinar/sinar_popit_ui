@@ -113,6 +113,7 @@ class SearchView(ListView):
             return self.render_template(data=data, search_key=search_key)
 
         status_code, data = self.fetch_entity(self.entity, page=page)
+        logging.warn(data["result"])
         if status_code != 200:
             return self.render_error(status_code, data)
         return self.render_template(self.template_name, data=data, edit=self.edit)
@@ -174,7 +175,7 @@ class CreateView(BaseView):
             return redirect("/%s"% self.entity)
         else:
             form = self.form()
-        return self.render_template(self.template_name, form=form)
+        return self.render_template(self.template_name, form=form, edit=True)
 
 
 class EditView(BaseView):
@@ -488,7 +489,7 @@ class CreateSubItemView(CreateView):
                 return redirect("/%s/%s/%s" % (self.parent_entity, parent_id, self.entity))
             return redirect("/%s/%s/%s" % (self.parent_entity, parent_id, self.entity))
 
-        return self.render_template(self.template_name, form=form)
+        return self.render_template(self.template_name, form=form, edit=True)
 
 
 # Since this is a special case We might as well just set the parameter
@@ -535,7 +536,7 @@ class PostMembershipCreateView(CreateSubItemView):
                 if status_code != 200:
                     return self.render_error(error_code=status_code, content=data)
                 return redirect("/%s/%s/%s" % (self.parent_entity, parent_id, self.entity))
-        return self.render_template(self.template_name, form=form, parent_id=parent_id)
+        return self.render_template(self.template_name, form=form, parent_id=parent_id, edit=True)
 
 
 class MergePersonView(BaseView):
@@ -592,7 +593,7 @@ class MergePersonView(BaseView):
                     if r.status_code != 200:
                         return self.render_error(error_code=r.status_code, content=r.json())
 
-        return self.render_template(self.template_name, form=form)
+        return self.render_template(self.template_name, form=form, edit=True)
 
 
 
