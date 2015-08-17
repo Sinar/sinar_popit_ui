@@ -229,7 +229,6 @@ def approve_user():
     if request.form:
 
         if form.validate():
-            print form.users.data
             user = User.query.filter_by(id=form.users.data).first()
             admin = user_datastore.find_role("admin")
             user_datastore.add_role_to_user(user, admin)
