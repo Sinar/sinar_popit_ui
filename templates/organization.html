@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}{% if edit %}{{ data.name }}{% else %}Create New organization{% endif %}{% endblock %}
+{% block title %}{% if edit %}{% if data %}{{ data.name }}{% endif %}{% else %}Create New organization{% endif %}{% endblock %}
 {% block extra_css %}
     <link rel="stylesheet" href="/static/typeaheadjs.css">
 
@@ -18,18 +18,23 @@
         class OrganizationEditForms(OrganizationForms):
             org_id = StringField("Organization ID")
     -->
+    {% if entity_id %}
     <a href="/organizations/{{ entity_id }}/posts/edit" class="btn btn-default">Post In Organizations</a>
     <a href="/organizations/{{ entity_id }}/posts/create" class="btn btn-default">Create Post In Organizations</a>
     <a href="/organizations/{{ entity_id }}/memberships/create" class="btn btn-default">Create Membership In Organizations</a>
     <a href="/organizations/{{ entity_id }}/memberships/edit" class="btn btn-default">Membership In Organizations</a>
+    {% endif %}
 
     <form method="post" action="">
 
         {% if edit %}
-        <div class="form-group">
-            {{ form.id.label }}
-            {{ form.id(readonly=true, class="form-control") }}
-        </div>
+
+            {% if form.id %}
+            <div class="form-group">
+                {{ form.id.label }}
+                {{ form.id(readonly=true, class="form-control") }}
+            </div>
+                {% endif %}
         {% endif %}
         <div class="form-group">
             {{ form.image.label }}

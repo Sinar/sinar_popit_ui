@@ -70,7 +70,7 @@ app.add_url_rule('/organizations/<parent_id>/posts', view_func=SearchSubItemView
                                                                                            entity="posts",
                                                                                            template_name="posts.html"))
 
-app.add_url_rule('/organizations/<parent_id>/posts', view_func=SearchSubItemEditView.as_view("posts_list_edit",
+app.add_url_rule('/organizations/<parent_id>/posts/edit', view_func=SearchSubItemEditView.as_view("posts_list_edit",
                                                                                            parent_entity="organizations",
                                                                                            entity="posts",
                                                                                            template_name="posts.html"))
@@ -94,7 +94,7 @@ app.add_url_rule('/posts/<parent_id>/memberships', view_func=SearchSubItemView.a
                                                                                            entity="memberships",
                                                                                            template_name="memberships.html"))
 
-app.add_url_rule('/posts/<parent_id>/memberships/edits', view_func=SearchSubItemEditView.as_view("post_membership_list_edit",
+app.add_url_rule('/posts/<parent_id>/memberships/edit', view_func=SearchSubItemEditView.as_view("post_membership_list_edit",
                                                                                            parent_entity="posts",
                                                                                            entity="memberships",
                                                                                            template_name="memberships.html"))
@@ -104,7 +104,7 @@ app.add_url_rule('/organizations/<parent_id>/memberships', view_func=SearchSubIt
                                                                                            entity="memberships",
                                                                                            template_name="memberships.html"))
 
-app.add_url_rule('/organizations/<parent_id>/memberships/edits', view_func=SearchSubItemEditView.as_view("organizations_membership_list_edit",
+app.add_url_rule('/organizations/<parent_id>/memberships/edit', view_func=SearchSubItemEditView.as_view("organizations_membership_list_edit",
                                                                                            parent_entity="organizations",
                                                                                            entity="memberships",
                                                                                            template_name="memberships.html"))
@@ -160,6 +160,11 @@ app.add_url_rule('/persons/<parent_id>/memberships/create', view_func=CreateSubI
                                                                                                       form=MembershipForm))
 
 app.add_url_rule('/persons/<parent_id>/memberships', view_func=SearchSubItemView.as_view("persons_membership_list",
+                                                                                           parent_entity="persons",
+                                                                                           entity="memberships",
+                                                                                           template_name="memberships.html"))
+
+app.add_url_rule('/persons/<parent_id>/memberships/edit', view_func=SearchSubItemEditView.as_view("persons_membership_list_edit",
                                                                                            parent_entity="persons",
                                                                                            entity="memberships",
                                                                                            template_name="memberships.html"))

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}{% if edit %}{{ data.name }}{% else %}Create New organization{% endif %}{% endblock %}
+{% block title %}{% if edit %}{% if data %}{{ data.name }}{% endif %}{% else %}Create New organization{% endif %}{% endblock %}
 {% block extra_css %}
     <link rel="stylesheet" href="/static/typeaheadjs.css">
 
@@ -22,10 +22,13 @@
     <a href="/posts/{{ entity_id }}/memberships/edit" class="btn btn-default">Membership In Post</a>
     <form method="post" action="">
         {% if edit %}
-        <div class="form-group">
-            {{ form.id.label }}
-            {{ form.id(readonly=true, class="form-control") }}
-        </div>
+            {% if form.id %}
+                <div class="form-group">
+
+                    {{ form.id.label }}
+                    {{ form.id(readonly=true, class="form-control") }}
+                </div>
+            {% endif %}
         {% endif %}
         <div class="form-group">
             {{ form.label.label }}

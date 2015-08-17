@@ -113,7 +113,6 @@ class SearchView(ListView):
             return self.render_template(data=data, search_key=search_key)
 
         status_code, data = self.fetch_entity(self.entity, page=page)
-        logging.warn(data["result"])
         if status_code != 200:
             return self.render_error(status_code, data)
         return self.render_template(self.template_name, data=data, edit=self.edit)
@@ -263,13 +262,11 @@ class EditView(BaseView):
                 continue
 
             if key == "area":
-                logging.warning(form.data[key])
                 if not form.data[key]:
                     continue
                 if not any(form.data[key][0].values()):
                     continue
                 data[key] = form.data[key][0]
-                logging.warn(data[key])
                 continue
 
             if type(form.data[key]) is list:
