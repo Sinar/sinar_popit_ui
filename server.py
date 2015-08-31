@@ -249,6 +249,10 @@ def approve_user():
 def unauthorized():
     return render_template("unauthorized.html")
 
+@app.route("/")
+def frontpage():
+    return render_template("frontpage.html")
+
 @user_registered.connect_via(app)
 def assign_user_role(app, user, confirm_token):
     user_role = user_datastore.find_role("user")
