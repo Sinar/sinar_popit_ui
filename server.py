@@ -186,7 +186,7 @@ app.add_url_rule('/posts/<entity_id>', view_func=SingleItemView.as_view("posts_v
                                                                           template_name="post_view.html"))
 
 
-
+# TODO: This is getting ugly
 session_opts = {
     "session.type": "cookie",
     "session.validate_key": "sinar.popit.editor"
@@ -201,6 +201,8 @@ class BeakerSessionInterface(SessionInterface):
     def save_session(self, app, session, response):
         session.save()
 
+app.wsgi_app = SessionMiddleware(app.wsgi_app, session_opts)
+app.session_interface = BeakerSessionInterface()
 
 @app.route("/language/set/<language_code>")
 def set_language(language_code):
@@ -269,6 +271,5 @@ def create_user():
 
 
 if __name__ == "__main__":
-    app.wsgi_app = SessionMiddleware(app.wsgi_app, session_opts)
-    app.session_interface = BeakerSessionInterface()
+
     app.run(host="0.0.0.0", debug=True, port=9000)
