@@ -171,7 +171,6 @@ class CreateView(BaseView):
                 return redirect("/%s/edit/%s" %(self.entity, data["result"]["id"]))
             else:
                 return self.render_template(self.template_name, form=form)
-            return redirect("/%s"% self.entity)
         else:
             form = self.form()
         return self.render_template(self.template_name, form=form, edit=True)
@@ -353,9 +352,9 @@ class EditView(BaseView):
         if "delete" in server_request.form:
             if self.entity == "memberships":
                 if self.data["result"].get("post_id"):
-                    redirect_url = "/posts/%s/memberships" % self.data["result"]["post_id"]
+                    redirect_url = "/posts/%s/memberships/edit" % self.data["result"]["post_id"]
                 else:
-                    redirect_url = "/organizations/%s/memberships" % self.data["result"]["organization_id"]
+                    redirect_url = "/organizations/%s/memberships/edit" % self.data["result"]["organization_id"]
             else:
                 redirect_url = "/%s" % self.entity
             self.delete_entity(self.entity, entity_id)
@@ -483,8 +482,8 @@ class CreateSubItemView(CreateView):
                 status_code, data = self.create_entity(form, language_key=language)
                 if status_code != 200:
                     return self.render_error(error_code=status_code, content=data)
-                return redirect("/%s/%s/%s" % (self.parent_entity, parent_id, self.entity))
-            return redirect("/%s/%s/%s" % (self.parent_entity, parent_id, self.entity))
+                return redirect("/%s/%s/%s/edit" % (self.parent_entity, parent_id, self.entity))
+            return redirect("/%s/%s/%s/edit" % (self.parent_entity, parent_id, self.entity))
 
         return self.render_template(self.template_name, form=form, edit=True)
 
