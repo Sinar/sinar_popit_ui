@@ -110,7 +110,7 @@ class SearchView(ListView):
             status_code, data = self.search_entity(self.entity, "name", search_key, page=page)
             if status_code != 200:
                 return self.render_error(error_code=status_code, content=data)
-            return self.render_template(data=data, search_key=search_key)
+            return self.render_template(data=data, search_key=search_key, edit=self.edit)
 
         status_code, data = self.fetch_entity(self.entity, page=page)
         if status_code != 200:
@@ -420,7 +420,7 @@ class SearchSubItemView(SearchView):
             status_code, data = self.search_entity(self.entity, **query)
             if status_code != 200:
                 return self.render_error(error_code=status_code, content=data)
-            return self.render_template(data=data, search_key=search_key, parent_id=parent_id)
+            return self.render_template(data=data, search_key=search_key, parent_id=parent_id, edit=self.edit)
 
         # Because parent_id do not link back to child and vice versa
         status_code, data = self.search_entity(self.entity, **query)

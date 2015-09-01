@@ -10,6 +10,6 @@ app.config["SECRET_KEY"] = const.secret_key
 app.config["SECURITY_POST_LOGOUT_VIEW"] = "/login"
 app.config["SECURITY_REGISTERABLE"] = True
 app.config["SECURITY_SEND_REGISTER_EMAIL"] = False
-app.config["SECURITY_POST_LOGIN_VIEW"] = "/organizations"
+app.config["SECURITY_POST_LOGIN_VIEW"] = "/organizations/edit"
 app.config["SECURITY_UNAUTHORIZED_VIEW"] = "/login"
 db = SQLAlchemy(app)
