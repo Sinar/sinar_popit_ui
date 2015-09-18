@@ -46,9 +46,9 @@
                     {% else %}
                         <tr>
                             {% if edit %}
-                                <td><a href="/memberships/edit/{{ result.id }}">{{ result.person.name }} as {{ result.post.label }}</a></td>
+                                <td><a href="/memberships/edit/{{ result.id }}">{{ result.person.name }} as {{ result.organization.name }}</a></td>
                             {% else %}
-                                <td><a href="/memberships/{{ result.id }}">{{ result.person.name }} as {{ result.post.label }}</a></td>
+                                <td><a href="/memberships/{{ result.id }}">{{ result.person.name }} as {{ result.organization.name }}</a></td>
                             {% endif %}
                         </tr>
                     {% endif %}
