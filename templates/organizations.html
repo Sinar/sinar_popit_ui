@@ -20,7 +20,7 @@
         </thead>
         <tbody>
 
-            {% for result in data.result %}
+            {% for result in data.results %}
             <tr>
                 {% if edit %}
                     <td><a href="/organizations/edit/{{ result.id }}">{% if result.name %}{{ result.name }}{% else %}Name Needed{% endif %}</a></td>

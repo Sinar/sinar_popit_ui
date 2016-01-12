@@ -16,14 +16,13 @@ import json
 import const
 import cachecontrol
 import logging
+from provider import PopitNgProvider
 
 
-# POPIT_ENDPOINT =  "http://sinar-malaysia.popit.mysociety.org/api/v0.1"
 POPIT_ENDPOINT = const.api_endpoint
 SUPPORTED_LANGUAGE = ["ms", "en"]
 
 class BaseView(View):
-    POPIT_ENDPOINT =  POPIT_ENDPOINT
     decorators = [ roles_required("admin") ]
     def __init__(self, entity, template_name):
         self.template_name = template_name
@@ -31,11 +30,9 @@ class BaseView(View):
         self.data = None
         session = requests.Session()
         self.session = cachecontrol.CacheControl(session)
+        self.provider = PopitNgProvider()
 
     def dispatch_request(self, *args, **kwargs):
-        raise NotImplementedError()
-
-    def fetch_entity(self, *args, **kwargs):
         raise NotImplementedError()
 
     def render_error(self, error_code, content):
@@ -47,16 +44,10 @@ class BaseView(View):
 
 class SingleItemView(BaseView):
     decorators = []
-    def fetch_entity(self, entity, entity_id, language_key="en"):
-        url = "%s/%s/%s" % (POPIT_ENDPOINT, entity, entity_id)
-        headers = { "Accept-Language": language_key }
-        r = self.session.get(url, headers=headers, verify=False)
-        return r.status_code, r.json()["result"]
-
-
+    
     def dispatch_request(self, entity_id):
         language = session.get("language", "en")
-        status_code, data = self.fetch_entity(self.entity, entity_id, language_key=language)
+        status_code, data = self.provider.fetch_entity(self.entity, entity_id, language)
         if status_code != 200:
             return self.render_error(error_code=status_code, content=data)
         return self.render_template(data=data, entity_id=entity_id)
@@ -65,22 +56,14 @@ class SingleItemView(BaseView):
 class ListView(BaseView):
     decorators = []
     edit = False
-    def fetch_entity(self, entity, page=0, language_key="en"):
-        url = "%s/%s" % (self.POPIT_ENDPOINT, entity)
-
-        headers = { "Accept-Language": language_key }
-        if page:
-            params = { "page": page }
-            r = self.session.get(url, params=params, headers=headers, verify=False)
-        else:
-            r = self.session.get(url, headers=headers, verify=False)
-        return (r.status_code, r.json())
 
     def dispatch_request(self, *args, **kwargs):
         language = session.get("language", "en")
-        status_code, data = self.fetch_entity(self.entity, language_key=language)
+        page = server_request.args.get("page")
+        status_code, data = self.provider.fetch_entities(self.entity, language, page=page)
         if status_code != 200:
             return self.render_error(error_code=status_code, content=data)
+        logging.warn(type(data["total"]))
         return self.render_template(data=data, edit=self.edit)
 
 
@@ -92,27 +75,20 @@ class ListEditView(BaseView):
 class SearchView(ListView):
     decorators = []
     edit = False
-    def search_entity(self, entity, key, value, page=0, language_key="en"):
-        headers = { "Accept-Language": language_key }
-        url = "%s/search/%s" % (self.POPIT_ENDPOINT, entity)
-        params = { "q": "%s:%s" % (key, value) }
-        if page:
-            params["page"] = page
-        r = self.session.get(url, params=params, headers=headers, verify=False)
-
-        return (r.status_code, r.json())
 
     def dispatch_request(self, *args, **kwargs):
         language = session.get("language", "en")
         search_key = server_request.args.get("search")
         page = server_request.args.get("page")
         if search_key:
-            status_code, data = self.search_entity(self.entity, "name", search_key, page=page)
+            status_code, data = self.provider.search_entities(
+                self.entity, language, page=page, search_params={"name": search_key}
+            )
             if status_code != 200:
                 return self.render_error(error_code=status_code, content=data)
             return self.render_template(data=data, search_key=search_key, edit=self.edit)
 
-        status_code, data = self.fetch_entity(self.entity, page=page)
+        status_code, data = self.provider.fetch_entities(self.entity, language, page=page)
         if status_code != 200:
             return self.render_error(status_code, data)
         return self.render_template(self.template_name, data=data, edit=self.edit)
@@ -131,31 +107,7 @@ class CreateView(BaseView):
         super(CreateView, self).__init__(entity,template_name)
         self.form = form
         self.headers = { "Content-Type":"application/json", "Apikey":api_key }
-
-    def create_entity(self, form, language_key="en"):
-        # Don't think all field comform to popit standard, for example parent field in organization, which is for convenience
-        # We only create the mainfield not the subfield.
-        url = "%s/%s" % (self.POPIT_ENDPOINT, self.entity)
-        data = {}
-
-        form_data = form.data
-
-        for key in form_data:
-            if not form.data[key]:
-                continue
-            elif "id" in key:
-                data[key] =  str(form.data[key])
-            elif key == "area":
-                if not any(form.data[key].values()):
-                    # Because id is a required field
-                    continue
-            elif key in ("organization", "person", "post", "parent"):
-                continue
-            else:
-                data[key] = { language_key: str(form.data[key]) }
-
-        r = self.session.post(url, data=json.dumps(data), headers=self.headers, verify=False)
-        return (r.status_code, r.json())
+        self.api_key = api_key
 
     def dispatch_request(self, *args, **kwargs):
 
@@ -165,7 +117,11 @@ class CreateView(BaseView):
             form = self.form(server_request.form)
 
             if form.validate():
-                status_code, data = self.create_entity(form, language_key=language)
+                status_code, data = self.provider.create_entity(
+                    self.entity, 
+                    language,
+                    self.api_key, 
+                    form)
                 if status_code != 200:
                     return self.render_error(error_code=status_code, content=data)
                 return redirect("/%s/edit/%s" %(self.entity, data["result"]["id"]))
@@ -185,50 +141,12 @@ class EditView(BaseView):
         self.form = form
         self.headers = { "Content-Type":"application/json", "Apikey":api_key }
         self.data = {}
-
-    def fetch_entity(self, entity, entity_id, language_key="en"):
-        self.headers["Accept-Language"] = language_key
-        url = "%s/%s/%s" % (self.POPIT_ENDPOINT, entity, entity_id)
-        r = self.session.get(url, headers=self.headers, verify=False)
-
-        if r.status_code != 200:
-            return r.status_code, r.json()
-        data = r.json()["result"]
-
-        for key, value in data.items():
-            if key == "area":
-                temp = data[key]
-                data[key] = [temp]
-                continue
-            if "_id" in key:
-
-                if key == "parent_id":
-                    if value:
-                        status, temp_data = self.fetch_entity("organizations", value, language_key=language_key)
-
-                        if status == 200:
-                            data["parent"] = temp_data["result"]["name"]
-                elif key == "area_id":
-                    continue
-                else:
-
-                    temp_entity, temp_id = key.split("_")
-
-                    temp_entity = "%ss" % temp_entity
-                    status, temp_data = self.fetch_entity(temp_entity, value, language_key=language_key)
-
-                    if "name" in temp_data["result"]:
-                        data[temp_entity[:-1]] = temp_data["result"]["name"]
-                    else:
-                        data[temp_entity[:-1]] = temp_data["result"]["label"]
-
-
-        return (r.status_code, {"result": data})
+        self.api_key = api_key
 
     def assemble_data(self, entity, entity_id):
         data = {}
         for language in SUPPORTED_LANGUAGE:
-            status_code, temp_data = self.fetch_entity(entity, entity_id, language_key=language)
+            status_code, temp_data = self.provider.fetch_entity(entity, entity_id, language)
             for field, value in temp_data["result"].items():
                 if field in ("name", "summary", "description", "label"):
                     temp = data.setdefault(field, {})
@@ -238,81 +156,6 @@ class EditView(BaseView):
                     data[field] = value
         return { "result": data }
 
-
-    def update_entity(self, entity, entity_id, form, original, delete_field=None, language_key="en"):
-        updated_data = {}
-
-        original_data = original["result"]
-
-        data = {}
-
-        if delete_field:
-            field_delete, field_id = delete_field.split(",")
-        else:
-            field_delete = None
-            field_id = None
-        for key in form.data:
-            # name is a required field
-            if key == "name":
-
-                data[key] = original_data[key]
-                data[key][language_key] = form.data[key]
-            if key in ("organization", "person", "post", "parent"):
-                continue
-
-            if key == "area":
-                if not form.data[key]:
-                    continue
-                if not any(form.data[key][0].values()):
-                    continue
-                data[key] = form.data[key][0]
-                continue
-
-            if type(form.data[key]) is list:
-
-                temp_list = []
-
-                for item in form.data[key]:
-                    if key == field_delete:
-                        # Skip this one, == delete,
-                        if item["id"] == field_id:
-                            continue
-                    test_list = []
-                    new_item = {}
-                    for key_ in item:
-                        test_list.append(item[key_])
-                        if item[key_]:
-                            new_item[key_] = item[key_]
-
-                    if any(test_list):
-                        temp_list.append(new_item)
-
-                if original_data[key] == temp_list:
-                    continue
-                else:
-                    data[key] = temp_list
-                    continue
-
-            if not form.data[key]:
-                continue
-
-            if form.data[key] == original_data.get(key):
-                continue
-
-            if "id" in key:
-                data[key] = form.data[key]
-            else:
-                if key in ("name", "summary", "description", "label"):
-                    data[key] = original_data.get(key, {})
-                    data[key][language_key] = form.data[key]
-                else:
-                    data[key] = form.data[key]
-
-
-        url = "%s/%s/%s" % (self.POPIT_ENDPOINT, entity, entity_id)
-
-        r = self.session.put(url, data=json.dumps(data), headers=self.headers, verify=False)
-        return r.status_code, r.json()
 
     def clean_form(self, form):
         key_to_pop = []
@@ -329,19 +172,15 @@ class EditView(BaseView):
             form[key].pop_entry()
         return form
 
-    def delete_entity(self, entity, entity_id):
-        url = "%s/%s/%s" % (self.POPIT_ENDPOINT, entity, entity_id)
-        r = self.session.delete(url, headers=self.headers, verify=False)
-
     def dispatch_request(self, entity_id):
 
         language = session.get("language", "en")
 
-        status_code, self.data = self.fetch_entity(self.entity, entity_id, language_key=language)
+        status_code, self.data = self.provider.fetch_entity(self.entity, entity_id, language)
         if status_code != 200:
             return self.render_error(error_code=status_code, content=self.data)
 
-        form = self.form.from_json(self.data["result"])
+        form = self.form.from_json(self.data)
 
         for key in form.data:
             if key == "area":
@@ -351,29 +190,30 @@ class EditView(BaseView):
 
         if "delete" in server_request.form:
             if self.entity == "memberships":
-                if self.data["result"].get("post_id"):
+                if self.data.get("post_id"):
                     redirect_url = "/posts/%s/memberships/edit" % self.data["result"]["post_id"]
                 else:
                     redirect_url = "/organizations/%s/memberships/edit" % self.data["result"]["organization_id"]
             else:
                 redirect_url = "/%s" % self.entity
-            self.delete_entity(self.entity, entity_id)
+            self.provider.delete_entity(self.entity, entity_id, language, self.api_key)
             return redirect(redirect_url)
 
         if server_request.form:
             form = self.form(server_request.form)
             form = self.clean_form(form)
 
-            delete_field = server_request.form.get("delete_item")
             if form.validate():
-                edit_data = self.assemble_data(self.entity, entity_id)
-                status_code, data = self.update_entity(self.entity, entity_id, form, edit_data, delete_field, language_key=language)
+
+                status_code, data = self.provider.update_entity(
+                    self.entity, 
+                    entity_id, language, self.api_key, form)
                 if status_code != 200:
+                    logging.warn(data)
                     return self.render_error(error_code=status_code, content=data)
                 return redirect("/%s/edit/%s" % (self.entity, entity_id))
 
-
-        return self.render_template(self.template_name, form=form, data=self.data["result"], edit=True, entity_id=entity_id)
+        return self.render_template(self.template_name, form=form, data=self.data, edit=True, entity_id=entity_id)
 
 
 class SearchSubItemView(SearchView):
@@ -390,7 +230,6 @@ class SearchSubItemView(SearchView):
             if key == "page":
                 continue
             if key == "language_key":
-                headers["Accept-Language"] = kwargs["language_key"]
                 continue
             queries.append("%s:%s" % (key,value))
         url = "%s/search/%s" % (self.POPIT_ENDPOINT, entity)
@@ -410,19 +249,27 @@ class SearchSubItemView(SearchView):
         id_key = "%s_id" % self.parent_entity[:-1]
         query = {}
         query[id_key] = parent_id
-        query["page"] = page
-        query["language_key"] = language
         if search_key:
 
             query["label"] = search_key
 
-            status_code, data = self.search_entity(self.entity, **query)
+            status_code, data = self.provider.search_entities(
+                 self.entity,
+                 language,
+                 page=page,
+                 search_params=query
+            )
             if status_code != 200:
                 return self.render_error(error_code=status_code, content=data)
             return self.render_template(data=data, search_key=search_key, parent_id=parent_id, edit=self.edit)
 
         # Because parent_id do not link back to child and vice versa
-        status_code, data = self.search_entity(self.entity, **query)
+        status_code, data = self.provider.search_entities(
+                 self.entity,
+                 language,
+                 page=page,
+                 search_params=query
+            )
 
         return self.render_template(data=data, search_key=search_key, parent_id=parent_id, parent_entity=self.parent_entity,
                                     edit=self.edit)
@@ -464,13 +311,13 @@ class CreateSubItemView(CreateView):
 
     def dispatch_request(self, parent_id):
         language = session.get("language", "en")
-        status_code, data = self.fetch_entity(self.parent_entity, parent_id, language_key=language)
+        status_code, data = self.provider.fetch_entity(self.parent_entity, parent_id, language)
         if status_code != 200:
             return self.render_error(error_code=status_code, content=data)
 
         parent_key = self.parent_entity[:-1]
         parent_id_key = "%s_id" % parent_key
-        init_data = { parent_id_key: parent_id, parent_key: data["result"]["name"]}
+        init_data = { parent_id_key: parent_id, parent_key: data["name"]}
         form = self.form.from_json(init_data)
         form["area"].append_entry({})
 
@@ -479,7 +326,7 @@ class CreateSubItemView(CreateView):
             form = self.form(server_request.form)
             form = self.clean_form(form)
             if form.validate():
-                status_code, data = self.create_entity(form, language_key=language)
+                status_code, data = self.provider.create_entity(self.entity, language, self.api_key, form)
                 if status_code != 200:
                     return self.render_error(error_code=status_code, content=data)
                 return redirect("/%s/%s/%s/edit" % (self.parent_entity, parent_id, self.entity))
@@ -506,15 +353,16 @@ class PostMembershipCreateView(CreateSubItemView):
         # 2) via organization
         # a) post is optional
         # b) organization have their id
-        status_code, post_data = self.fetch_entity(self.parent_entity, parent_id)
         language = session.get("language", "en")
+        status_code, post_data = self.provider.fetch_entity(self.parent_entity, parent_id, language)
+
         if status_code != 200:
             return self.render_error(error_code=status_code, content=post_data)
         # Now post exist
         # Assume post have organization in data
         organization = post_data["result"].get("organization")
         if not organization:
-            status_code, org_data = self.fetch_entity("organizations", post_data["result"]["organization_id"])
+            status_code, org_data = self.provider.fetch_entity("organizations", post_data["result"]["organization_id"], language=language)
             if status_code != 200:
                 return self.render_error(error_code=status_code, content=org_data)
             organization = org_data["result"]["name"]
@@ -528,7 +376,9 @@ class PostMembershipCreateView(CreateSubItemView):
         if server_request.form:
             form = self.form(server_request.form)
             if form.validate():
-                status_code, data = self.create_entity(form)
+                status_code, data = self.provider.create_entity(
+                    self.entity, language, self.api_key, form
+                )
                 if status_code != 200:
                     return self.render_error(error_code=status_code, content=data)
                 return redirect("/%s/%s/%s" % (self.parent_entity, parent_id, self.entity))
