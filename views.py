@@ -122,7 +122,7 @@ class CreateView(BaseView):
                     language,
                     self.api_key, 
                     form)
-                if status_code != 200:
+                if status_code != 201:
                     return self.render_error(error_code=status_code, content=data)
                 return redirect("/%s/edit/%s" %(self.entity, data["result"]["id"]))
             else:
