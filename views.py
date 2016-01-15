@@ -327,7 +327,7 @@ class CreateSubItemView(CreateView):
             form = self.clean_form(form)
             if form.validate():
                 status_code, data = self.provider.create_entity(self.entity, language, self.api_key, form)
-                if status_code != 200:
+                if status_code != 201:
                     return self.render_error(error_code=status_code, content=data)
                 return redirect("/%s/%s/%s/edit" % (self.parent_entity, parent_id, self.entity))
             return redirect("/%s/%s/%s/edit" % (self.parent_entity, parent_id, self.entity))
@@ -379,7 +379,7 @@ class PostMembershipCreateView(CreateSubItemView):
                 status_code, data = self.provider.create_entity(
                     self.entity, language, self.api_key, form
                 )
-                if status_code != 200:
+                if status_code != 201:
                     return self.render_error(error_code=status_code, content=data)
                 return redirect("/%s/%s/%s" % (self.parent_entity, parent_id, self.entity))
         return self.render_template(self.template_name, form=form, parent_id=parent_id, edit=True)
