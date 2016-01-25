@@ -42,7 +42,7 @@
                 {% endif %}
             </li>
             {% endif %}
-            {% for i in range(0, ((data.total / data.per_page) + 1)|int) %}
+            {% for i in range(0, data.num_pages|int) %}
                 {% if search_key %}
                     <li><a href="?search={{ search_key }}&page={{ i + 1 }}">{{ i + 1 }}</a></li>
                 {% else %}
