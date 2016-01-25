@@ -17,6 +17,7 @@ import const
 import cachecontrol
 import logging
 from provider import PopitNgProvider
+from provider import Paginator
 
 
 POPIT_ENDPOINT = const.api_endpoint
@@ -223,25 +224,6 @@ class SearchSubItemView(SearchView):
         super(SearchSubItemView,self).__init__(entity, template_name)
         self.parent_entity = parent_entity
 
-    def search_entity(self, entity, **kwargs):
-        queries = []
-        headers = {}
-        for key,value in kwargs.items():
-            if key == "page":
-                continue
-            if key == "language_key":
-                continue
-            queries.append("%s:%s" % (key,value))
-        url = "%s/search/%s" % (self.POPIT_ENDPOINT, entity)
-        params = { "q": " AND ".join(queries) }
-
-        if "page" in kwargs:
-            params["page"] = kwargs["page"]
-
-        r = self.session.get(url, params=params, headers=headers, verify=False)
-
-        return (r.status_code, r.json())
-
     def dispatch_request(self, parent_id, *args, **kwargs):
         language = session.get("language", "en")
         search_key = server_request.args.get("search")
@@ -261,15 +243,18 @@ class SearchSubItemView(SearchView):
             )
             if status_code != 200:
                 return self.render_error(error_code=status_code, content=data)
-            return self.render_template(data=data, search_key=search_key, parent_id=parent_id, edit=self.edit)
+            return self.render_template(data=data, search_key=search_key, parent_id=parent_id, edit=self.edit,
+                                        parent_entity=self.parent_entity)
 
         # Because parent_id do not link back to child and vice versa
-        status_code, data = self.provider.search_entities(
-                 self.entity,
-                 language,
-                 page=page,
-                 search_params=query
-            )
+
+        status_code, data = self.provider.list_subitem(
+            self.parent_entity,
+            parent_id,
+            self.entity,
+            language,
+            page
+        )
 
         return self.render_template(data=data, search_key=search_key, parent_id=parent_id, parent_entity=self.parent_entity,
                                     edit=self.edit)

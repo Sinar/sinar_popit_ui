@@ -1,6 +1,7 @@
 import requests
 import cachecontrol
 import json
+from copy import deepcopy
 
 # We are migrating from popit to popit_ng better have an abstraction layer
 class BasePopoloProvider(object):
@@ -62,7 +63,7 @@ class PopitNgProvider(BasePopoloProvider):
         status_code, data = self.get_request(url, params)
         return status_code, data
 
-    def search_entities(self, entity, language, page=0, search_params={}):
+    def search_entities(self, entity, language, page=0, search_params={}, fetch_from_id=True):
         url = "%s/%s/%s/%s/" % (self.base_url, language, "search", entity)
         param = {}
         search_strings = []
@@ -74,6 +75,36 @@ class PopitNgProvider(BasePopoloProvider):
         if page:
             param["page"] = page
         status_code, data = self.get_request(url, params=param)
+        result = []
+        for item in data["results"]:
+            temp = item
+            if fetch_from_id:
+                if temp.get("parent_id"):
+                    _, parent = self.fetch_entity("organizations", temp["parent_id"], language)
+                    temp["parent"] = parent["name"]
+                else:
+                    temp["parent"] = None
+
+                if temp.get("organization_id"):
+                    _, organization = self.fetch_entity("organizations", temp["organization_id"], language)
+                    temp["organization"] = organization
+                else:
+                    temp["organization"] = None
+
+                if temp.get("person_id"):
+                    _, person = self.fetch_entity("persons", temp["person_id"], language)
+                    temp["person"] = person
+                else:
+                    temp["person"] = None
+
+                if temp.get("post_id"):
+                    _, post = self.fetch_entity("posts", temp["post_id"], language)
+                    temp["post"] = post
+                else:
+                    temp["post"] = None
+            result.append(temp)
+        data["results"] = result
+
         return status_code, data
 
     def create_entity(self, entity, language, api_key, form):
@@ -131,7 +162,72 @@ class PopitNgProvider(BasePopoloProvider):
             "Authorization":"Token %s" % api_key
         }
         r = self.session.delete(url, headers=header)
-        
+
+    def list_subitem(self, entity, entity_id, child, language, page, fetch_from_id=True):
+        url = "%s/%s/%s/%s/" % (self.base_url, language, entity, entity_id)
+        status_code, output = self.get_request(url)
+        data = output["result"]
+        if not page:
+            page = 1
+        if not child in data:
+            raise ProviderEntityErrorException("Sub Entity not found")
+        result = []
+        paginator = Paginator(data[child])
+        paginated = paginator.return_result(page=page)
+        for item in paginated["results"]:
+
+            temp = item
+            if fetch_from_id:
+                if temp.get("parent_id"):
+                    _, parent = self.fetch_entity("organizations", temp["parent_id"], language)
+                    temp["parent"] = parent["name"]
+                else:
+                    temp["parent"] = None
+
+                if temp.get("organization_id"):
+                    _, organization = self.fetch_entity("organizations", temp["organization_id"], language)
+                    temp["organization"] = organization
+                else:
+                    temp["organization"] = None
+
+                if temp.get("person_id"):
+                    _, person = self.fetch_entity("persons", temp["person_id"], language)
+                    temp["person"] = person
+                else:
+                    temp["person"] = None
+
+                if temp.get("post_id"):
+                    _, post = self.fetch_entity("posts", temp["post_id"], language)
+                    temp["post"] = post
+                else:
+                    temp["post"] = None
+            result.append(temp)
+
+
+        paginated["result"] = result
+        return status_code, paginated
+
+class Paginator(object):
+    def __init__(self, data, page_size=10):
+        self.data = data
+        self.page_size = page_size
+        self.total = len(self.data)
+        self.pages = self.total / self.page_size
+
+    def get_page(self, page):
+        start = (page - 1) * self.page_size
+        end = start + self.page_size
+        return self.data[start:end]
+
+    def return_result(self, page):
+        current_page = self.get_page(page)
+        results = {}
+        results["results"] = current_page
+        results["page"] = page
+        results["total"] = self.total
+        results["per_page"] = self.page_size
+        return results
+
 
 
 class ProviderEntityNotFoundException(Exception):
@@ -140,3 +236,5 @@ class ProviderEntityNotFoundException(Exception):
 
 class ProviderEntityErrorException(Exception):
     pass
+
+
