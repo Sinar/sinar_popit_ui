@@ -143,6 +143,12 @@ class PopitNgProvider(BasePopoloProvider):
             # Because we have to hack around the form framework
             if key in ("person", "organization", "parent", "post", "membership", "member"):
                 continue
+            if key in ("other_names", "contact_details", "identifiers", "links"):
+                for item in form.data[key]:
+                    print(item["id"])
+
+                    if not item["id"]:
+                        del item["id"]
             if key == "area":
                 if not form.data[key]:
                     continue
@@ -153,6 +159,7 @@ class PopitNgProvider(BasePopoloProvider):
             data[key] = form.data[key]
 
         r = self.session.put(url, headers=header, data=json.dumps(data))
+        print(r.text)
         return r.status_code, r.json()
 
     def delete_entity(self, entity, entity_id, language, api_key):
