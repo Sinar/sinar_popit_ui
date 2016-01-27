@@ -255,7 +255,7 @@ class SearchSubItemView(SearchView):
             language,
             page
         )
-
+        print(data)
         return self.render_template(data=data, search_key=search_key, parent_id=parent_id, parent_entity=self.parent_entity,
                                     edit=self.edit)
 
@@ -433,20 +433,22 @@ class SearchAjaxView(MethodView):
     def get(self, entity):
 
         language = session.get("language", "en")
+
+        provider = PopitNgProvider()
+
         label = server_request.args.get("label")
         if not label:
             name = server_request.args.get("name")
-            status_code, data = self.fetch_entity(entity, "name", name, language_key=language)
+
+            status_code, data = provider.search_entities(
+                entity,
+                language,
+                search_params={"name":name}
+            )
         else:
-            status_code, data = self.fetch_entity(entity, "label", label, language_key=language)
-        return Response(json.dumps(data["result"]), mimetype="application/json")
-
-
-    def fetch_entity(self, entity, key, value, language_key="en"):
-        url = "%s/search/%s" % (self.POPIT_ENDPOINT, entity)
-        params = { "q": "%s:%s" % (key, value) }
-
-        headers = { "Accept-Language":language_key}
-        r = requests.get(url, params=params, headers=headers, verify=False)
-
-        return (r.status_code, r.json())
+            status_code, data = provider.search_entities(
+                entity,
+                language,
+                search_params={"label":label}
+            )
+        return Response(json.dumps(data["results"]), mimetype="application/json")

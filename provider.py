@@ -233,6 +233,7 @@ class Paginator(object):
         results["page"] = page
         results["total"] = self.total
         results["per_page"] = self.page_size
+        results["num_pages"] = self.pages
         return results
 
 
