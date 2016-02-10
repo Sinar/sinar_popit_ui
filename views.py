@@ -192,9 +192,9 @@ class EditView(BaseView):
         if "delete" in server_request.form:
             if self.entity == "memberships":
                 if self.data.get("post_id"):
-                    redirect_url = "/posts/%s/memberships/edit" % self.data["result"]["post_id"]
+                    redirect_url = "/posts/%s/memberships/edit" % self.data["post_id"]
                 else:
-                    redirect_url = "/organizations/%s/memberships/edit" % self.data["result"]["organization_id"]
+                    redirect_url = "/organizations/%s/memberships/edit" % self.data["organization_id"]
             else:
                 redirect_url = "/%s" % self.entity
             self.provider.delete_entity(self.entity, entity_id, language, self.api_key)
