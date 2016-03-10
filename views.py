@@ -148,7 +148,7 @@ class EditView(BaseView):
         data = {}
         for language in SUPPORTED_LANGUAGE:
             status_code, temp_data = self.provider.fetch_entity(entity, entity_id, language)
-            for field, value in temp_data["result"].items():
+            for field, value in temp_data["r     esult"].items():
                 if field in ("name", "summary", "description", "label"):
                     temp = data.setdefault(field, {})
                     temp[language] = value
@@ -189,6 +189,7 @@ class EditView(BaseView):
             if hasattr(form[key], "entries"):
                 form[key].append_entry({})
 
+        # TODO: check for type
         if "delete" in server_request.form:
             if self.entity == "memberships":
                 if self.data.get("post_id"):
@@ -198,6 +199,12 @@ class EditView(BaseView):
             else:
                 redirect_url = "/%s" % self.entity
             self.provider.delete_entity(self.entity, entity_id, language, self.api_key)
+            return redirect(redirect_url)
+
+        if "delete_item" in server_request.form:
+            redirect_url = "/%s/edit/%s" % (self.entity, entity_id)
+            item, item_id = server_request.form["delete_item"].split(",")
+            self.provider.delete_subitem(self.entity, entity_id, item, item_id, language, self.api_key)
             return redirect(redirect_url)
 
         if server_request.form:

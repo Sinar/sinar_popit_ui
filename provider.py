@@ -157,7 +157,8 @@ class PopitNgProvider(BasePopoloProvider):
                 data[key] = form.data[key][0]
             
             data[key] = form.data[key]
-
+        print(data)
+        print(header)
         r = self.session.put(url, headers=header, data=json.dumps(data))
         print(r.text)
         return r.status_code, r.json()
@@ -213,6 +214,14 @@ class PopitNgProvider(BasePopoloProvider):
 
         paginated["result"] = result
         return status_code, paginated
+
+    def delete_subitem(self, parent, parent_id, child, child_id, language, api_key):
+        url = "%s/%s/%s/%s/%s/%s/" % (self.base_url, language, parent, parent_id, child, child_id)
+        header = {
+            "Content-Type":"application/json",
+            "Authorization":"Token %s" % api_key
+        }
+        r = self.session.delete(url, headers=header)
 
 class Paginator(object):
     def __init__(self, data, page_size=10):
