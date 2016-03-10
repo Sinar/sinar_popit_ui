@@ -352,18 +352,19 @@ class PostMembershipCreateView(CreateSubItemView):
             return self.render_error(error_code=status_code, content=post_data)
         # Now post exist
         # Assume post have organization in data
-        organization = post_data["result"].get("organization")
+        print(post_data)
+        organization = post_data.get("organization")
         if not organization:
-            status_code, org_data = self.provider.fetch_entity("organizations", post_data["result"]["organization_id"], language=language)
+            status_code, org_data = self.provider.fetch_entity("organizations", post_data["organization_id"], language=language)
             if status_code != 200:
                 return self.render_error(error_code=status_code, content=org_data)
-            organization = org_data["result"]["name"]
+            organization = org_data["name"]
         # Now we assemble the data
         form = self.form(
-            organization_id=post_data["result"]["organization_id"],
+            organization_id=post_data["organization_id"],
             organization=organization,
             post_id=parent_id,
-            post=post_data["result"]["label"]
+            post=post_data["label"]
         )
         if server_request.form:
             form = self.form(server_request.form)
@@ -410,7 +411,7 @@ class MergePersonView(BaseView):
                 if status_code != 200:
                     return self.render_error(error_code=status_code, content=source)
 
-                for membership in target["result"]["memberships"]:
+                for membership in target["memberships"]:
                     data = {}
                     try:
                         data["role"] = membership["role"]
