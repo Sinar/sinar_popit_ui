@@ -185,6 +185,7 @@ class PersonForm(BaseForm):
     birth_date = StringField("Birth Date", validators=[Optional(), Regexp("^[0-9]{4}(-[0-9]{2}){0,2}$")])
     death_date = StringField("Death Date", validators=[Optional(), Regexp("^[0-9]{4}(-[0-9]{2}){0,2}$")])
     summary = StringField("Summary")
+    biography = StringField("Biography")
     # biography = TextAreaField("Biography")
     contact_details = FieldList(FormField(ContactForm))
     links = FieldList(FormField(LinkForm))
