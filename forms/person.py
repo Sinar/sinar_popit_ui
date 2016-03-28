@@ -119,7 +119,7 @@ from wtforms.validators import Optional
       }
     },
     "links": {
-      "description": "URLs to documents about the person",
+      "description": "URLs documenting about the person",
       "type": "array",
       "items": {
         "$ref": "http://www.popoloproject.com/schemas/link.json#"
