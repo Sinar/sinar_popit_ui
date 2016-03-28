@@ -1,0 +1,6 @@
+apikey: nice_try
+api_endpoint: http://api.popit.sinarproject.org/ # Fix this, hardcoded in provider for now
+secret_key: generate_yourself
+admin_name: root@localhost
+admin_pass: rockgod
+db_path: sqlite:////tmp/test.db
