@@ -2,6 +2,8 @@ import requests
 import cachecontrol
 import json
 from copy import deepcopy
+import const
+
 
 # We are migrating from popit to popit_ng better have an abstraction layer
 class BasePopoloProvider(object):
@@ -28,8 +30,9 @@ class BasePopoloProvider(object):
 
 
 # TODO: Use cache control
+# TODO: fix the url forming method. use labeled for readability
 class PopitNgProvider(BasePopoloProvider):
-    base_url = "http://api.popit.sinarproject.org"
+    base_url = const.api_endpoint
 
     # Maintain meta data
     def get_request(self, url, params={}, headers={}):
@@ -56,6 +59,7 @@ class PopitNgProvider(BasePopoloProvider):
     # have a separate one because pagination meta data is needed
     def fetch_entities(self, entity, language, page=0):
         url = "%s/%s/%s/" % (self.base_url, language, entity)
+        print url
         # 0 is False in python. 
         params = {}
         if page:
@@ -106,6 +110,13 @@ class PopitNgProvider(BasePopoloProvider):
         data["results"] = result
 
         return status_code, data
+
+    def fetch_subitem(self, parent_entity, parent_id, child_entity, child_id, language):
+        url = "%s/%s/%s/%s/%s/%s/" % (self.base_url, language, parent_entity, parent_id, child_entity, child_id)
+
+        status_code, output = self.get_request(url)
+        return status_code, output["result"]
+
 
     def create_entity(self, entity, language, api_key, form):
         url = "%s/%s/%s/" % (self.base_url, language, entity)
@@ -222,6 +233,86 @@ class PopitNgProvider(BasePopoloProvider):
             "Authorization":"Token %s" % api_key
         }
         r = self.session.delete(url, headers=header)
+
+    def fetch_item_citation(self,entity, entity_id, field, language):
+        url = "%s/%s/%s/%s/citations/%s" % (self.base_url, language, entity, entity_id, field)
+
+        status_code, result = self.get_request(url)
+        return status_code, result["results"]
+
+    def fetch_subitem_citation(self, parent, parent_id, child, child_id, field, language):
+        url = "%s/%s/%s/%s/%s/%s/citations/%s" % (self.base_url, language, parent, parent_id, child, child_id, field)
+
+        status_code, result = self.get_request(url)
+        return status_code, result["results"]
+
+    def create_item_citation(self, entity, entity_id, field, language, api_key, data):
+        header = {
+            "Content-Type": "application/json",
+            "Authorization": "Token %s" % api_key
+        }
+
+        url = "%s/%s/%s/%s/citations/%s" % (self.base_url, language, entity, entity_id, field)
+
+        # We just use the 3 field, no conversion needed
+        r = self.session.post(url, headers=header, data=json.dumps(data))
+        return r.status_code, r.json()
+
+    def update_item_citation(self, entity, entity_id, field, link_id, language, api_key, data):
+        url = "%s/%s/%s/%s/citations/%s/%s" % (self.base_url, language, entity, entity_id, field, link_id)
+
+        header = {
+            "Content-Type": "application/json",
+            "Authorization": "Token %s" % api_key
+        }
+
+        r = self.session.put(url, headers=header, data=json.dumps(data))
+        return r.status_code, r.json()
+
+    def delete_item_citation(self, entity, entity_id, field, link_id, language, api_key):
+        url = "%s/%s/%s/%s/citations/%s/%s" % (self.base_url, language, entity, entity_id, field, link_id)
+
+        header = {
+            "Content-Type": "application/json",
+            "Authorization": "Token %s" % api_key
+        }
+        r = self.session.delete(url, headers=header)
+        print url
+        return r.status_code
+
+    def create_subitem_citation(self, parent, parent_id, child, child_id, field, language, api_key, data):
+        url = "%s/%s/%s/%s/%s/%s/citations/%s/" % (self.base_url, language, parent, parent_id, child, child_id, field)
+
+        print(url)
+        header = {
+            "Content-Type": "application/json",
+            "Authorization": "Token %s" % api_key
+        }
+
+        r = self.session.post(url, headers=header, data=json.dumps(data))
+        return r.status_code, r.json()
+
+    def update_subitem_citation(self,  parent, parent_id, child, child_id, field, link_id, language, api_key, data):
+        url = "%s/%s/%s/%s/%s/%s/citations/%s/%s/" % (self.base_url, language, parent, parent_id, child, child_id, field, link_id)
+        print(url)
+        header = {
+            "Content-Type": "application/json",
+            "Authorization": "Token %s" % api_key
+        }
+
+        r = self.session.put(url, headers=header, data=json.dumps(data))
+        return r.status_code, r.json()
+
+    def delete_subitem_citation(self,  parent, parent_id, child, child_id, field, link_id, language, api_key):
+        url = "%s/%s/%s/%s/%s/%s/citations/%s/%s/" % (
+        self.base_url, language, parent, parent_id, child, child_id, field, link_id)
+
+        header = {
+            "Content-Type": "application/json",
+            "Authorization": "Token %s" % api_key
+        }
+        r = self.session.delete(url, headers=header)
+
 
 class Paginator(object):
     def __init__(self, data, page_size=10):

@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}{{ data.name }}{% endblock %}
+{% block content %}
+<div class="container">
+    <form method="post" action="">
+        {% for citation in form.citations %}
+            <hr>
+                {% if citation.id %}
+                <div class="form-group">
+
+                    {{ citation["id"](readonly=true, class="form-control") }}
+                </div>
+                {% endif %}
+                <div class="form-group">
+                   {% if citation.url.errors %}
+                        <div class="errors">
+                            {% for error in citation.url.errors %}
+                                <div class="alert alert-danger" role="alert">
+                                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                                <span class="sr-only">Error:</span>
+                                {{ error }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    {{ citation.url.label }}
+                    {{ citation.url(class="form-control") }}
+                </div>
+                <div class="form-group">
+                    {% if citation.note.errors %}
+                        <div class="errors">
+                            {% for error in citation.note.errors %}
+                                <div class="alert alert-danger" role="alert">
+                                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                                <span class="sr-only">Error:</span>
+                                {{ error }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    {{ citation.note.label }}
+                    {{ citation.note(class="form-control") }}
+                </div>
+                <button class="btn btn-danger" type="submit" name="delete_item" value="citations,{{ citation['id'].data }}">Delete this</button>
+        {% endfor %}
+        <hr>
+        <button type="submit" class="btn btn-primary" name="save" value="save">Save</button>
+    </form>
+</div>
+{% endblock %}

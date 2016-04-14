@@ -12,23 +12,23 @@
 
         <div id="image"><img src="{{data.image }}" height="50%" width="50%"></div>
         <dl>
-            <dt>Name</dt>
+            <dt>Name <a href="/organizations/{{ entity_id }}/citations/name"><span class="badge">sources</span></a></dt>
             <dd>{{ data.name }}</dd>
             {% include "other_names_views.html" %}
 
             {% include "identifiers_view.html" %}
 
             {% include "area_views.html" %}
-            <dt>Classification</dt>
+            <dt>Classification<a href="/organizations/{{ entity_id }}/citations/classification"><span class="badge">sources</span></a></dt>
             <dd>{{ data.classification }}</dd>
-            <dt>Parent ID</dt>
-            <dd>{{ data.parent_id }}</dd>
+            <dt>Parent ID<a href="/organizations/{{ entity_id }}/citations/parent_id"><span class="badge">sources</span></a></dt>
+            <dd>{{ data.parent_id }} </dd>
             <dt>Parent Org</dt>
             <dd>{{ data.parent }}</dd>
-            <dt>Founding Date</dt>
-            <dd>{{ data.founding_date }}</dd>
-            <dt>Dissolution Date</dt>
-            <dd>{{ data.dissolution }}</dd>
+            <dt>Founding Date<a href="/organizations/{{ entity_id }}/citations/founding_date"><span class="badge">sources</span></a></dt>
+            <dd>{{ data.founding_date }} </dd>
+            <dt>Dissolution Date<a href="/organizations/{{ entity_id }}/citations/dissolution"><span class="badge">sources</span></a></dt>
+            <dd>{{ data.dissolution }} </dd>
             {% include "contact_details_view.html" %}
             {% include "links_views.html" %}
 

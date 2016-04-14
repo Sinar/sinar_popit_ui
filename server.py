@@ -10,6 +10,10 @@ from views import MergePersonView
 from views import SingleItemView
 from views import SearchSubItemEditView
 from views import SearchEditView
+from views import CitationView
+from views import SubItemCitationView
+from views import CitationEditView
+from views import SubItemEditCitationView
 from flask import session
 from flask import request
 from flask import redirect
@@ -110,6 +114,37 @@ app.add_url_rule('/organizations/<parent_id>/memberships/edit', view_func=Search
                                                                                            template_name="memberships.html"))
 
 
+app.add_url_rule('/posts/<parent_id>/other_labels/<child_id>/citations/<field>/edit',
+                 view_func=SubItemEditCitationView.as_view("posts_otherlabels_citation_edit",
+                                                            parent_entity="posts",
+                                                            child_entity="other_labels",
+                                                            api_key=api_key))
+
+app.add_url_rule('/posts/<parent_id>/other_labels/<child_id>/citations/<field>',
+                 view_func=SubItemCitationView.as_view("posts_otherlabels_citation",
+                                                       parent_entity="posts",
+                                                       child_entity="other_labels"))
+
+app.add_url_rule('/posts/<parent_id>/contact_details/<child_id>/citations/<field>/edit',
+                 view_func=SubItemEditCitationView.as_view("posts_contact_details_citation_edit",
+                                                       parent_entity="posts",
+                                                       child_entity="contact_details",
+                                                       api_key=api_key))
+
+app.add_url_rule('/posts/<parent_id>/contact_details/<child_id>/citations/<field>',
+                 view_func=SubItemCitationView.as_view("posts_contact_details_citation",
+                                                       parent_entity="posts",
+                                                       child_entity="contact_details"))
+
+app.add_url_rule('/posts/<entity_id>/citations/<field>/edit',
+                 view_func=CitationEditView.as_view("post_citations_edit",
+                                                entity="posts",
+                                                api_key=api_key))
+
+app.add_url_rule('/posts/<entity_id>/citations/<field>',
+                 view_func=CitationView.as_view("post_citations",
+                                                entity="posts"))
+
 app.add_url_rule('/posts/<parent_id>/memberships/create', view_func=PostMembershipCreateView.as_view("post_membership_create",
                                                                                                      template_name="membership.html",
                                                                                                      api_key=api_key
@@ -121,6 +156,47 @@ app.add_url_rule('/organizations/<parent_id>/memberships/create', view_func=Crea
                                                                                                       template_name="membership.html",
                                                                                                       api_key=api_key,
                                                                                                       form=MembershipForm))
+
+app.add_url_rule('/organizations/<parent_id>/othernames/<child_id>/citations/<field>/edit',
+                 view_func=SubItemEditCitationView.as_view("organization_othername_citation_edit",
+                                                       parent_entity="organizations",
+                                                       child_entity="othernames",
+                                                       api_key=api_key))
+
+app.add_url_rule('/organizations/<parent_id>/othernames/<child_id>/citations/<field>', view_func=SubItemCitationView.as_view("organization_othername_citation",
+                                                                                                                             parent_entity="organizations",
+                                                                                                                             child_entity="othernames"))
+
+app.add_url_rule('/organizations/<parent_id>/contact_details/<child_id>/citations/<field>/edit',
+                 view_func=SubItemEditCitationView.as_view("organization_contact_details_citation_edit",
+                                                       parent_entity="organizations",
+                                                       child_entity="contact_details",
+                                                       api_key=api_key))
+
+app.add_url_rule('/organizations/<parent_id>/contact_details/<child_id>/citations/<field>',
+                 view_func=SubItemCitationView.as_view("organization_contact_details_citation",
+                                                       parent_entity="organizations",
+                                                       child_entity="contact_details"))
+
+app.add_url_rule('/organizations/<parent_id>/identifiers/<child_id>/citations/<field>',
+                 view_func=SubItemCitationView.as_view("organization_identifiers_citation",
+                                                       parent_entity="organizations",
+                                                       child_entity="identifiers"))
+
+
+app.add_url_rule('/organizations/<parent_id>/identifiers/<child_id>/citations/<field>/edit',
+                 view_func=SubItemEditCitationView.as_view("organization_identifiers_citation_edit",
+                                                       parent_entity="organizations",
+                                                       child_entity="identifiers",
+                                                       api_key=api_key))
+
+app.add_url_rule('/organizations/<entity_id>/citations/<field>', view_func=CitationView.as_view("organization_citations",
+                                                                                                entity="organizations"))
+
+app.add_url_rule('/organizations/<entity_id>/citations/<field>/edit',
+                 view_func=CitationEditView.as_view("organization_citations_edit",
+                                                entity="organizations",
+                                                    api_key=api_key))
 
 app.add_url_rule('/memberships/edit/<entity_id>', view_func=EditView.as_view("membership_edit",
                                                                              entity="memberships",
@@ -168,6 +244,24 @@ app.add_url_rule('/persons/<parent_id>/memberships/edit', view_func=SearchSubIte
                                                                                            parent_entity="persons",
                                                                                            entity="memberships",
                                                                                            template_name="memberships.html"))
+
+app.add_url_rule('/persons/<parent_id>/othernames/<child_id>/citations/<field>',
+                 view_func=SubItemCitationView.as_view("person_othername_citation",
+                                                       child_entity="othernames"))
+
+app.add_url_rule('/persons/<parent_id>/contact_details/<child_id>/citations/<field>',
+                 view_func=SubItemCitationView.as_view("person_contact_details_citation",
+                                                       parent_entity="persons",
+                                                       child_entity="contact_details"))
+
+app.add_url_rule('/persons/<parent_id>/identifiers/<child_id>/citations/<field>',
+                 view_func=SubItemCitationView.as_view("person_identifiers_citation",
+                                                       parent_entity="persons",
+                                                       child_entity="identifiers"))
+
+app.add_url_rule('/persons/<entity_id>/citations/<field>',
+                 view_func=CitationView.as_view("person_citations",
+                                                entity="persons"))
 
 app.add_url_rule('/persons/<entity_id>', view_func=SingleItemView.as_view("persons_views",
                                                                           entity="persons",

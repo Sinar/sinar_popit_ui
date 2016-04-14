@@ -12,6 +12,7 @@ import requests
 from forms.base import BaseForm
 from forms.membership import MembershipForm
 from forms.merge import MergeForm
+from forms.citations import CitationForm
 import json
 import const
 import cachecontrol
@@ -460,3 +461,256 @@ class SearchAjaxView(MethodView):
                 search_params={"label":label}
             )
         return Response(json.dumps(data["results"]), mimetype="application/json")
+
+
+# TODO: implement views based show citation list
+# TODO: link to open new window/tab target="_blank"
+# TODO: each delete shows the full link
+# TODO: the entity is different than the rest'
+# TODO: check for parent item(the item the citation belong to) existence
+class CitationView(View):
+
+    def __init__(self, entity):
+        self.entity = entity
+        session = requests.Session()
+        self.session = cachecontrol.CacheControl(session)
+        self.provider = PopitNgProvider()
+        self.form = CitationForm
+
+    def dispatch_request(self, entity_id, field):
+        language = session.get("language", "en")
+
+        status_code, entity = self.provider.fetch_entity(self.entity, entity_id, language)
+        data={}
+        status_code, output = self.provider.fetch_item_citation(self.entity, entity_id, field, language)
+        if status_code != 200:
+            return render_template("error.html", error_code=status_code, content=data)
+        data["citations"] = output
+
+        if entity.get("name"):
+            data["name"] = entity["name"]
+
+        elif entity.get("identifier"):
+            data["name"] = entity["identifier"]
+
+        else:
+            data["name"] = entity["label"]
+
+        return render_template("citations_view.html", data=data)
+
+
+
+class CitationEditView(View):
+    methods = ["GET", "POST"]
+    decorators = [roles_required("admin")]
+
+    def __init__(self, entity, api_key):
+        session = requests.Session()
+        self.session = cachecontrol.CacheControl(session)
+        self.provider = PopitNgProvider()
+        self.entity = entity
+        self.api_key = api_key
+
+    def process_form(self, citation, entity_id, field, language):
+        if citation["id"]:
+            status_code, output = self.provider.update_item_citation(
+                self.entity, entity_id, field, citation["id"], language, self.api_key, citation)
+        else:
+            status_code, output = self.provider.create_item_citation(
+                self.entity, entity_id, field, language, self.api_key, citation)
+        return status_code, output
+
+    def dispatch_request(self, entity_id, field):
+        language = session.get("language", "en")
+
+        status_code, entity = self.provider.fetch_entity(self.entity, entity_id, language)
+        data = {}
+        status_code, output = self.provider.fetch_item_citation(self.entity, entity_id, field, language)
+
+        if status_code != 200:
+            return render_template("error.html", error_code=status_code, content=data)
+
+        data["citations"] = output
+        form = CitationForm.from_json(data)
+        form["citations"].append_entry({})
+        if entity.get("name"):
+            data["name"] = entity["name"]
+
+        elif entity.get("identifier"):
+            data["name"] = entity["identifier"]
+
+        else:
+            data["name"] = entity["label"]
+
+        if "delete_item" in server_request.form:
+
+            key = server_request.form["delete_item"].split(",")[1]
+            status_code = self.provider.delete_item_citation(
+                self.entity, entity_id, field, key, language, self.api_key
+            )
+            print(status_code, entity)
+            redirect_url = "/%s/%s/citations/%s/edit" % (self.entity, entity_id, field)
+            return redirect(redirect_url)
+
+        if server_request.form:
+            form = CitationForm(server_request.form)
+            if form.validate():
+
+                for citation in form.data["citations"]:
+                    if not citation["url"]:
+                        continue
+
+                    status_code, output = self.process_form(
+                        citation, entity_id, field, language
+                    )
+                    print(status_code, output)
+                    if status_code != 200 and status_code != 201:
+
+                        return render_template("error.html", error_code=status_code, content=citation)
+
+                redirect_url = "/%s/%s/citations/%s/edit" % (self.entity, entity_id, field)
+                return redirect(redirect_url)
+
+        return render_template("citations.html", form=form, data=data)
+
+
+
+class SubItemCitationView(View):
+
+    def __init__(self, parent_entity, child_entity):
+        session = requests.Session()
+        self.session = cachecontrol.CacheControl(session)
+        self.provider = PopitNgProvider()
+        self.parent_entity = parent_entity
+        self.child_entity = child_entity
+
+    def dispatch_request(self, parent_id, child_id, field):
+        language = session.get("language", "en")
+        data = {}
+        status, entity = self.provider.fetch_subitem(self.parent_entity, parent_id, self.child_entity, child_id, language)
+        if status != 200:
+            return render_template("error.html", error_code=status, content=entity)
+
+        if entity.get("name"):
+            data["name"] = entity["name"]
+
+        elif entity.get("identifier"):
+            data["name"] = entity["identifier"]
+
+        else:
+            data["name"] = entity["label"]
+
+        status_code, output = self.provider.fetch_subitem_citation(
+            self.parent_entity,
+            parent_id,
+            self.child_entity,
+            child_id,
+            field,
+            language
+        )
+
+        if status_code != 200:
+            return render_template("error.html", error_code=status_code, content=output)
+        data["citations"] = output
+
+        return render_template("citations_view.html", data=data)
+
+
+class SubItemEditCitationView(View):
+    decorators = [roles_required("admin")]
+
+    methods = ["GET", "POST"]
+
+    def __init__(self, parent_entity, child_entity, api_key):
+        session = requests.Session()
+        self.session = cachecontrol.CacheControl(session)
+        self.provider = PopitNgProvider()
+
+        self.parent_entity = parent_entity
+        self.child_entity = child_entity
+        self.api_key = api_key
+
+    def process_form(self, citation, parent_id, child_id, field, language):
+        if citation["id"]:
+            status_code, output = self.provider.update_subitem_citation(
+                self.parent_entity,
+                parent_id,
+                self.child_entity,
+                child_id,
+                field,
+                citation["id"],
+                language,
+                self.api_key,
+                citation
+            )
+        else:
+            status_code, output = self.provider.create_subitem_citation(
+                self.parent_entity,
+                parent_id,
+                self.child_entity,
+                child_id,
+                field,
+                language,
+                self.api_key,
+                citation
+            )
+        return status_code, output
+
+    def dispatch_request(self, parent_id, child_id, field):
+
+        language = session.get("language", "en")
+        data = {}
+        status, entity = self.provider.fetch_subitem(self.parent_entity, parent_id, self.child_entity, child_id,
+                                                     language)
+        if status != 200:
+            return render_template("error.html", error_code=status, content=entity)
+
+        status_code, output = self.provider.fetch_subitem_citation(
+            self.parent_entity,
+            parent_id,
+            self.child_entity,
+            child_id,
+            field,
+            language
+        )
+        print(output)
+        data["citations"] = output
+        print(data)
+        form = CitationForm.from_json(data)
+        form["citations"].append_entry({})
+        print(form["citations"])
+
+        if entity.get("name"):
+            data["name"] = entity["name"]
+
+        elif entity.get("identifier"):
+            data["name"] = entity["identifier"]
+
+        else:
+            data["name"] = entity["label"]
+
+        if "delete_item" in server_request.form:
+            key = server_request.form["delete_item"].split(",")[1]
+            self.provider.delete_subitem_citation(self.parent_entity,
+                                                  parent_id,
+                                                  self.child_entity,
+                                                  child_id, field, key, language, self.api_key)
+
+            redirect_url = "/%s/%s/%s/%s/citations/%s/edit" % (self.parent_entity, parent_id, self.child_entity, child_id, field)
+            return redirect(redirect_url)
+
+        if server_request.form:
+            form = CitationForm(server_request.form)
+            if form.validate():
+                for citation in form.data["citations"]:
+                    if not citation["url"]:
+                        continue
+                    status_code, output = self.process_form(citation, parent_id, child_id, field, language)
+                    print(status_code, output)
+                    if status_code != 200 and status_code != 201:
+                        return render_template("error.html", error_code=status_code, content=citation)
+
+                redirect_url = "/%s/%s/%s/%s/citations/%s/edit" % (self.parent_entity, parent_id, self.child_entity, child_id, field)
+                return redirect(redirect_url)
+
+        return render_template("citations.html", form=form, data=data)

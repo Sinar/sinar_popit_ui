@@ -4,8 +4,8 @@
 <dd>
 {% for identifier in data.identifiers %}
     <dl>
-        <dd>{{ identifier.identifier }}</dd>
-        <dd>{{ identifier.schema }}</dd>
+        <dd>{{ identifier.identifier }} <a href="/organizations/{{ entity_id }}/identifiers/{{ identifier["id"] }}/citations/identifier"><span class="badge">sources</span></a></dd>
+        <dd>{{ identifier.schema }} <a href="/organizations/{{ entity_id }}/identifiers/{{ identifier["id"] }}/citations/schema"><span class="badge">sources</span></a></dd>
     </dl>
     <hr>
 

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+    <form method="post" action="">
+        {{ form.csrf_token }}
+        {{ form.name.errors }}{{ form.name.label }} {{ form.name }}<br/>
+        {{ form.age.errors }}{{ form.age.label }} {{ form.age }}<br/>
+        <hr>
+        {% for child in form.child %}
+            {{ child["name"].errors }}{{ child["name"].label }} {{ child["name"] }}<br/>
+            {{ child.age.errors }}{{ child.age.label }} {{ child.age }}
+            <hr>
+        {% endfor %}
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>
