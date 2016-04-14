@@ -245,14 +245,32 @@ app.add_url_rule('/persons/<parent_id>/memberships/edit', view_func=SearchSubIte
                                                                                            entity="memberships",
                                                                                            template_name="memberships.html"))
 
+app.add_url_rule('/persons/<parent_id>/othernames/<child_id>/citations/<field>/edit',
+                 view_func=SubItemEditCitationView.as_view("person_othername_citation_edit",
+                                                       child_entity="othernames",
+                                                       api_key=api_key))
+
 app.add_url_rule('/persons/<parent_id>/othernames/<child_id>/citations/<field>',
                  view_func=SubItemCitationView.as_view("person_othername_citation",
                                                        child_entity="othernames"))
+
+app.add_url_rule('/persons/<parent_id>/contact_details/<child_id>/citations/<field>/edit',
+                 view_func=SubItemEditCitationView.as_view("person_contact_details_citation_edit",
+                                                       parent_entity="persons",
+                                                       child_entity="contact_details",
+                                                       api_key=api_key))
 
 app.add_url_rule('/persons/<parent_id>/contact_details/<child_id>/citations/<field>',
                  view_func=SubItemCitationView.as_view("person_contact_details_citation",
                                                        parent_entity="persons",
                                                        child_entity="contact_details"))
+
+
+app.add_url_rule('/persons/<parent_id>/identifiers/<child_id>/citations/<field>/edit',
+                 view_func=SubItemCitationView.as_view("person_identifiers_citation_edit",
+                                                       parent_entity="persons",
+                                                       child_entity="identifiers",
+                                                       api_key=api_key))
 
 app.add_url_rule('/persons/<parent_id>/identifiers/<child_id>/citations/<field>',
                  view_func=SubItemCitationView.as_view("person_identifiers_citation",
@@ -261,6 +279,10 @@ app.add_url_rule('/persons/<parent_id>/identifiers/<child_id>/citations/<field>'
 
 app.add_url_rule('/persons/<entity_id>/citations/<field>',
                  view_func=CitationView.as_view("person_citations",
+                                                entity="persons"))
+
+app.add_url_rule('/persons/<entity_id>/citations/<field>/edit',
+                 view_func=CitationView.as_view("person_citations_edit",
                                                 entity="persons"))
 
 app.add_url_rule('/persons/<entity_id>', view_func=SingleItemView.as_view("persons_views",
