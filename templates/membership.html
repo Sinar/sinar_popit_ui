@@ -39,7 +39,7 @@
             {% endif %}
         {% endif %}
         <div class="form-group">
-            {{ form.person.label }}
+            {{ form.person.label }}<a href="/memberships/{{ entity_id }}/citations/person/edit"><span class="badge">sources</span></a>
             {{ form.person(class="form-control") }}
         </div>
         <div class="form-group">
@@ -48,7 +48,7 @@
             <span id="person_id_help" class="help-block"></span>
         </div>
         <div class="form-group">
-            {{ form.organization.label }}
+            {{ form.organization.label }}<a href="/memberships/{{ entity_id }}/citations/organization/edit"><span class="badge">sources</span></a>
             {{ form.organization(class="form-control") }}
         </div>
         <div class="form-group">
@@ -57,7 +57,7 @@
             <span id="organization_id_help" class="help-block"></span>
         </div>
         <div class="form-group">
-            {{ form.post.label }}
+            {{ form.post.label }}<a href="/memberships/{{ entity_id }}/citations/post/edit"><span class="badge">sources</span></a>
             {{ form.post(class="form-control") }}
         </div>
         <div class="form-group">
@@ -66,17 +66,17 @@
             <span id="post_id_help" class="help-block"></span>
         </div>
         <div class="form-group">
-            {{ form.role.label }}
+            {{ form.role.label }}<a href="/memberships/{{ entity_id }}/citations/role/edit"><span class="badge">sources</span></a>
             {{ form.role(class="form-control") }}
         </div>
         <div><b>Area</b></div>
         {% include "area.html" %}
         <div class="form-group">
-            {{ form.start_date.label }}
+            {{ form.start_date.label }}<a href="/memberships/{{ entity_id }}/citations/start_date/edit"><span class="badge">sources</span></a>
             {{ form.start_date(class="form-control") }}
         </div>
         <div class="form-group">
-            {{ form.end_date.label }}
+            {{ form.end_date.label }}<a href="/memberships/{{ entity_id }}/citations/end_date/edit"><span class="badge">sources</span></a>
             {{ form.end_date(class="form-control") }}
         </div>
         <button type="submit" class="btn btn-primary" name="save" value="save">Save</button>

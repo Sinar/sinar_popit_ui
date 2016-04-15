@@ -12,7 +12,7 @@
                 {% endfor %}
             </div>
         {% endif %}
-        {{ contacts["type"].label }}
+        {{ contacts["type"].label }} <a href="/{{ entity }}/{{ entity_id }}/contact_details/{{ contacts["id"] }}/citations/type/edit"><span class="badge">sources</span></a>
         {{ contacts["type"](class="form-control") }}
     </div>
     <div class="form-group">
@@ -27,7 +27,7 @@
             {% endfor %}
         </div>
         {% endif %}
-        {{ contacts["label"].label }}
+        {{ contacts["label"].label }} <a href="/{{ entity }}/{{ entity_id }}/contact_details/{{ contacts["id"] }}/citations/label/edit"><span class="badge">sources</span></a>
         {{ contacts["label"](class="form-control") }}
     </div>
     <div class="form-group">
@@ -42,7 +42,7 @@
             {% endfor %}
         </div>
         {% endif %}
-        {{ contacts.value.label }}
+        {{ contacts.value.label }} <a href="/{{ entity }}/{{ entity_id }}/contact_details/{{ contacts["id"] }}/citations/value/edit"><span class="badge">sources</span></a>
         {{ contacts.value(class="form-control") }}
     </div>
     <button class="btn btn-danger" type="submit" name="delete_item" value="contact_details,{{ contacts['id'].data }}">Delete this</button>

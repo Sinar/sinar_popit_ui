@@ -293,6 +293,24 @@ app.add_url_rule('/organizations/<entity_id>', view_func=SingleItemView.as_view(
                                                                           entity="organizations",
                                                                           template_name="organization_view.html"))
 
+app.add_url_rule('/memberships/<entity_id>/citations/edit', view_func=CitationView.as_view("membership_citations_edit",
+                                                                                           entity="memberships",
+                                                                                           api_key=api_key))
+
+app.add_url_rule('/memberships/<entity_id>/contact_details/<child_id>/citations/<field>/edit', view_func=SubItemEditCitationView.as_view("membership_contactdetail_citation_edit",
+                                                                                                                                 parent_entity="memberships",
+                                                                                                                                 child_entity="contact_details",
+                                                                                                                                 api_key=api_key
+                                                                                                                                 ))
+
+app.add_url_rule('/memberships/<entity_id>/contact_details/<child_id>/citations/<field>',
+                 view_func=SubItemEditCitationView.as_view("membership_contactdetail_citation",
+                                                           parent_entity="memberships",
+                                                           child_entity="contact_details"
+                                                           ))
+
+app.add_url_rule('/memberships/<entity_id>/citations', view_func=CitationView.as_view("membership_citations",entity="memberships"))
+
 app.add_url_rule('/memberships/<entity_id>', view_func=SingleItemView.as_view("memberships_views",
                                                                           entity="memberships",
                                                                           template_name="membership_view.html"))

@@ -4,13 +4,13 @@
 <hr>
 {% for other_name in data.other_names %}
     <dl>
-        <dt>Name<a href="/organizations/{{ entity_id }}/othernames/{{ other_name["id"] }}/citations/name"><span class="badge">sources</span></a></dt>
+        <dt>Name<a href="/{{ entity }}/{{ entity_id }}/othernames/{{ other_name["id"] }}/citations/name"><span class="badge">sources</span></a></dt>
         <dd>{{ other_name["name"] }}</dd>
-        <dt>Start Date<a href="/organizations/{{ entity_id }}/othernames/{{ other_name["id"] }}/citations/start_date"><span class="badge">sources</span></a></dt>
+        <dt>Start Date<a href="/{{ entity }}/{{ entity_id }}/othernames/{{ other_name["id"] }}/citations/start_date"><span class="badge">sources</span></a></dt>
         <dd>{{ other_name.start_date }}</dd>
-        <dt>End Date<a href="/organizations/{{ entity_id }}/othernames/{{ other_name["id"] }}/citations/end_date"><span class="badge">sources</span></a></dt>
+        <dt>End Date<a href="/{{ entity }}/{{ entity_id }}/othernames/{{ other_name["id"] }}/citations/end_date"><span class="badge">sources</span></a></dt>
         <dd>{{ other_name.end_date }}</dd>
-        <dt>Note<a href="/organizations/{{ entity_id }}/othernames/{{ other_name["id"] }}/citations/note"><span class="badge">sources</span></a></dt>
+        <dt>Note<a href="/{{ entity }}/{{ entity_id }}/othernames/{{ other_name["id"] }}/citations/note"><span class="badge">sources</span></a></dt>
         <dd>{{ other_name.note }}</dd>
     </dl>
     <hr>

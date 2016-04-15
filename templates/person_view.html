@@ -10,19 +10,19 @@
 
     <div id="image"><img src="{{ data.image }}" width="50%" height="50%"/></div>
     <dl>
-        <dt>Name</dt>
+        <dt>Name<a href="/persons/{{ entity_id }}/citations/name"><span class="badge">sources</span></a></dt>
         <dd>{{ data.name }}</dd>
         {% include "other_names_views.html" %}
         {% include "identifiers_view.html" %}
-        <dt>Email</dt>
+        <dt>Email<a href="/persons/{{ entity_id }}/citations/email"><span class="badge">sources</span></a></dd></dt>
         <dd>{{ data.email }}</dd>
-        <dt>Gender</dt>
+        <dt>Gender<a href="/persons/{{ entity_id }}/citations/name"><span class="badge">sources</span></a></dt>
         <dd>{{ data.gender }}</dd>
-        <dt>Birth Date</dt>
+        <dt>Birth Date<a href="/persons/{{ entity_id }}/citations/name"><span class="badge">sources</span></a></dt>
         <dd>{{ data.birth_date }}</dd>
-        <dt>Dead Date</dt>
+        <dt>Dead Date<a href="/persons/{{ entity_id }}/citations/name"><span class="badge">sources</span></a></dt>
         <dd>{{ data.dead_date }}</dd>
-        <dt>Summary</dt>
+        <dt>Summary<a href="/persons/{{ entity_id }}/citations/name"><span class="badge">sources</span></a></dt>
         <dd>{{ data.summary }}</dd>
         {% include "contact_details_view.html" %}
 

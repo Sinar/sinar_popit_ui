@@ -52,7 +52,7 @@
                     {% endfor %}
                 </div>
             {% endif %}
-            {{ form.name.label }}
+            {{ form.name.label }}<a href="/organizations/{{ entity_id }}/citations/name/edit"><span class="badge">sources</span></a>
             {{ form.name(class="form-control") }}
         </div>
         {% if form.other_names %}
@@ -77,7 +77,7 @@
                     {% endfor %}
                 </div>
             {% endif %}
-            {{ form.classification.label }}
+            {{ form.classification.label }}<a href="/organizations/{{ entity_id }}/citations/classification/edit"><span class="badge">sources</span></a>
             {{ form.classification(class="form-control") }}
         </div>
         <div class="form-group">
@@ -86,7 +86,7 @@
             <span id="parent_id_help" class="help-block"></span>
         </div>
         <div class="form-group">
-            {{ form.parent.label }}
+            {{ form.parent.label }}<a href="/organizations/{{ entity_id }}/citations/parent/edit"><span class="badge">sources</span></a>
             {{ form.parent(class="form-control typeahead") }}
         </div>
         <div class="form-group">
@@ -101,7 +101,7 @@
                     {% endfor %}
                 </div>
             {% endif %}
-            {{ form.founding_date.label }}
+            {{ form.founding_date.label }}<a href="/organizations/{{ entity_id }}/citations/founding_date/edit"><span class="badge">sources</span></a>
             {{ form.founding_date(class="form-control") }}
         </div>
         <div class="form-group">
@@ -116,7 +116,7 @@
                     {% endfor %}
                 </div>
             {% endif %}
-            {{ form.dissolution_date.label }}
+            {{ form.dissolution_date.label }}<a href="/organizations/{{ entity_id }}/citations/dissolution_date/edit"><span class="badge">sources</span></a>
             {{ form.dissolution_date(class="form-control") }}
         </div>
         {% if form.contact_details %}

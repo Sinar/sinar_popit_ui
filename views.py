@@ -52,7 +52,7 @@ class SingleItemView(BaseView):
         status_code, data = self.provider.fetch_entity(self.entity, entity_id, language)
         if status_code != 200:
             return self.render_error(error_code=status_code, content=data)
-        return self.render_template(data=data, entity_id=entity_id)
+        return self.render_template(data=data, entity_id=entity_id, entity=self.entity)
 
 
 class ListView(BaseView):
@@ -222,7 +222,7 @@ class EditView(BaseView):
                     return self.render_error(error_code=status_code, content=data)
                 return redirect("/%s/edit/%s" % (self.entity, entity_id))
 
-        return self.render_template(self.template_name, form=form, data=self.data, edit=True, entity_id=entity_id)
+        return self.render_template(self.template_name, form=form, data=self.data, edit=True, entity_id=entity_id, entity=self.entity)
 
 
 class SearchSubItemView(SearchView):

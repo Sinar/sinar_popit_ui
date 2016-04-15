@@ -11,18 +11,18 @@
 
         <a href="/posts/{{ entity_id }}/memberships" class="btn btn-default">Membership In Post</a>
         <dl>
-            <dt>Label</dt>
+            <dt>Label<a href="/posts/{{ entity_id }}/citations/label"><span class="badge">sources</span></a></dt>
             <dd>{{ data.label }}</dd>
-            <dt>Role</dt>
+            <dt>Role<a href="/posts/{{ entity_id }}/citations/role"><span class="badge">sources</span></a></dt>
             <dd>{{ data.role }}</dd>
             {% include "area_views.html" %}
-            <dt>Organization</dt>
+            <dt>Organization<a href="/posts/{{ entity_id }}/citations/organization"><span class="badge">sources</span></a></dt>
             <dd>{{ data.organization }}</dd>
             <dt>Organization ID</dt>
             <dd>{{ data.organization_id }}</dd>
-            <dt>Start Date</dt>
+            <dt>Start Date<a href="/posts/{{ entity_id }}/citations/start_date"><span class="badge">sources</span></a></dt>
             <dd>{{ data.start_date }}</dd>
-            <dt>End Date</dt>
+            <dt>End Date<a href="/posts/{{ entity_id }}/citations/end_date"><span class="badge">sources</span></a></dt>
             <dd>{{ data.end_date }}</dd>
         </dl>
     </div>

@@ -31,17 +31,17 @@
             {% endif %}
         {% endif %}
         <div class="form-group">
-            {{ form.label.label }}
+            {{ form.label.label }}<a href="/posts/{{ entity_id }}/citations/label/edit"><span class="badge">sources</span></a>
             {{ form.label(class="form-control") }}
         </div>
         <div class="form-group">
-            {{ form.role.label }}
+            {{ form.role.label }}<a href="/posts/{{ entity_id }}/citations/role/edit"><span class="badge">sources</span></a>
             {{ form.role(class="form-control") }}
         </div>
         <div><b>Area</b></div>
         {% include "area.html" %}
         <div class="form-group">
-            {{ form.organization.label }}
+            {{ form.organization.label }}<a href="/posts/{{ entity_id }}/citations/organization/edit"><span class="badge">sources</span></a>
             {{ form.organization(class="form-control") }}
         </div>
         <div class="form-group">
@@ -49,11 +49,11 @@
             {{ form.organization_id(class="form-control typeahead") }}
         </div>
         <div class="form-group">
-            {{ form.start_date.label }}
+            {{ form.start_date.label }}<a href="/posts/{{ entity_id }}/citations/start_date/edit"><span class="badge">sources</span></a>
             {{ form.start_date(class="form-control") }}
         </div>
         <div class="form-group">
-            {{ form.end_date.label }}
+            {{ form.end_date.label }}<a href="/posts/{{ entity_id }}/citations/end_date/edit"><span class="badge">sources</span></a>
             {{ form.end_date(class="form-control") }}
         </div>
         <button type="submit" class="btn btn-primary" name="save" value="save">Save</button>

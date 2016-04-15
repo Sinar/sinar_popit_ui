@@ -4,9 +4,9 @@
 
     {% for contacts in data.contact_details %}
         <dl>
-            <dd>{{ contacts["type"] }}<a href="/organizations/{{ entity_id }}/contact_details/{{ contacts["id"] }}/citations/type"><span class="badge">sources</span></a></dd>
-            <dd>{{ contacts["label"] }}<a href="/organizations/{{ entity_id }}/contact_details/{{ contacts["id"] }}/citations/label"><span class="badge">sources</span></a></dd>
-            <dd>{{ contacts.value }}<a href="/organizations/{{ entity_id }}/contact_details/{{ contacts["id"] }}/citations/value"><span class="badge">sources</span></a></dd>
+            <dd>{{ contacts["type"] }}<a href="/{{ entity }}/{{ entity_id }}/contact_details/{{ contacts["id"] }}/citations/type"><span class="badge">sources</span></a></dd>
+            <dd>{{ contacts["label"] }}<a href="/{{ entity }}/{{ entity_id }}/contact_details/{{ contacts["id"] }}/citations/label"><span class="badge">sources</span></a></dd>
+            <dd>{{ contacts.value }}<a href="/{{ entity }}/{{ entity_id }}/contact_details/{{ contacts["id"] }}/citations/value"><span class="badge">sources</span></a></dd>
         </dl>
         <hr>
 

@@ -12,24 +12,24 @@
         <a href="/persons/{{ data['person_id'] }}" class="btn btn-default">Go to Persons</a>
     {% endif %}
     <dl>
-        <dt>Person</dt>
+        <dt>Person<a href="/memberships/{{ entity_id }}/citations/person"><span class="badge">sources</span></a></dt>
         <dd>{{ data.person }}</dd>
         <dt>Person ID</dt>
         <dd>{{ data.person_id }}</dd>
         <dt>Organization</dt>
-        <dd>{{ data.organization }}</dd>
+        <dd>{{ data.organization }}<a href="/memberships/{{ entity_id }}/citations/organizations"><span class="badge">sources</span></a></dd>
         <dt>Organization id</dt>
         <dd>{{ data.organization_id }}</dd>
-        <dt>Post</dt>
+        <dt>Post<a href="/memberships/{{ entity_id }}/citations/posts"><span class="badge">sources</span></a></dt>
         <dd>{{ data.post }}</dd>
         <dt>Post ID</dt>
         <dd>{{ data.post_id }}</dd>
-        <dt>Role</dt>
+        <dt>Role<a href="/memberships/{{ entity_id }}/citations/role"><span class="badge">sources</span></a></dt>
         <dd>{{ data.role }}</dd>
         {% include "area_views.html" %}
-        <dt>Start Date</dt>
+        <dt>Start Date<a href="/memberships/{{ entity_id }}/citations/start_date"><span class="badge">sources</span></a></dt>
         <dd>{{ data.start_date }}</dd>
-        <dt>End Date</dt>
+        <dt>End Date<a href="/memberships/{{ entity_id }}/citations/end_date"><span class="badge">sources</span></a></dt>
         <dd>{{ data.end_date }}</dd>
     </dl>
 

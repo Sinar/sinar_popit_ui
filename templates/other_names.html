@@ -12,7 +12,7 @@
                 {% endfor %}
             </div>
         {% endif %}
-        {{ other_name["name"].label }}
+        {{ other_name["name"].label }}<a href="/{{ entity }}/{{ entity_id }}/othernames/{{ other_name["id"] }}/citations/name/edit"><span class="badge">sources</span></a>
         {{ other_name["name"](class="form-control") }}
     </div>
     <div class="form-group">
@@ -27,7 +27,7 @@
             {% endfor %}
         </div>
         {% endif %}
-        {{ other_name.start_date.label }}
+        {{ other_name.start_date.label }}<a href="/{{ entity }}/{{ entity_id }}/othernames/{{ other_name["id"] }}/citations/start_date/edit"><span class="badge">sources</span></a>
         {{ other_name.start_date(class="form-control") }}
     </div>
     <div class="form-group">
@@ -42,11 +42,11 @@
             {% endfor %}
         </div>
         {% endif %}
-        {{ other_name.end_date.label }}
+        {{ other_name.end_date.label }}<a href="/{{ entity }}/{{ entity_id }}/othernames/{{ other_name["id"] }}/citations/end_date/edit"><span class="badge">sources</span></a>
         {{ other_name.end_date(class="form-control") }}
     </div>
     <div class="form-group">
-        {{ other_name.note.label }}
+        {{ other_name.note.label }}<a href="/{{ entity }}/{{ entity_id }}/othernames/{{ other_name["id"] }}/citations/note/edit"><span class="badge">sources</span></a>
         {{ other_name.note(class="form-control") }}
     </div>
     <button class="btn btn-danger" type="submit" name="delete_item" value="othernames,{{ other_name['id'].data }}">Delete this</button>
