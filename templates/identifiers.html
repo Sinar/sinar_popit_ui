@@ -12,7 +12,7 @@
                 {% endfor %}
             </div>
         {% endif %}
-        {{ identifier.identifier.label }} <a href="/{{ entity }}/{{ entity_id }}/identifiers/{{ identifier["id"] }}/citations/identifier/edit"><span class="badge">sources</span></a>
+        {{ identifier.identifier.label }} <a href="/{{ entity }}/{{ entity_id }}/identifiers/{{ identifier["id"].data }}/citations/identifier/edit"><span class="badge">sources</span></a>
         {{ identifier.identifier(class="form-control") }}
     </div>
     <div class="form-group">
@@ -27,7 +27,7 @@
             {% endfor %}
         </div>
         {% endif %}
-        {{ identifier.scheme.label }}<a href="/{{ entity }}/{{ entity_id }}/identifiers/{{ identifier["id"] }}/citations/scheme"><span class="badge">sources</span></a>
+        {{ identifier.scheme.label }}<a href="/{{ entity }}/{{ entity_id }}/identifiers/{{ identifier["id"].data }}/citations/scheme"><span class="badge">sources</span></a>
         {{ identifier.scheme(class="form-control") }}
     </div>
     <button class="btn btn-danger" type="submit" name="delete_item" value="identifiers,{{ identifier['id'].data }}">Delete this</button>
