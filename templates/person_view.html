@@ -16,13 +16,13 @@
         {% include "identifiers_view.html" %}
         <dt>Email<a href="/persons/{{ entity_id }}/citations/email"><span class="badge">sources</span></a></dd></dt>
         <dd>{{ data.email }}</dd>
-        <dt>Gender<a href="/persons/{{ entity_id }}/citations/name"><span class="badge">sources</span></a></dt>
+        <dt>Gender<a href="/persons/{{ entity_id }}/citations/gender"><span class="badge">sources</span></a></dt>
         <dd>{{ data.gender }}</dd>
-        <dt>Birth Date<a href="/persons/{{ entity_id }}/citations/name"><span class="badge">sources</span></a></dt>
+        <dt>Birth Date<a href="/persons/{{ entity_id }}/citations/birth_date"><span class="badge">sources</span></a></dt>
         <dd>{{ data.birth_date }}</dd>
-        <dt>Dead Date<a href="/persons/{{ entity_id }}/citations/name"><span class="badge">sources</span></a></dt>
-        <dd>{{ data.dead_date }}</dd>
-        <dt>Summary<a href="/persons/{{ entity_id }}/citations/name"><span class="badge">sources</span></a></dt>
+        <dt>Dead Date<a href="/persons/{{ entity_id }}/citations/death_date"><span class="badge">sources</span></a></dt>
+        <dd>{{ data.death_date }}</dd>
+        <dt>Summary<a href="/persons/{{ entity_id }}/citations/summary"><span class="badge">sources</span></a></dt>
         <dd>{{ data.summary }}</dd>
         {% include "contact_details_view.html" %}
 
