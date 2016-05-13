@@ -279,13 +279,15 @@ app.add_url_rule('/persons/<parent_id>/identifiers/<child_id>/citations/<field>'
                                                        parent_entity="persons",
                                                        child_entity="identifiers"))
 
+app.add_url_rule('/persons/<entity_id>/citations/<field>/edit',
+                 view_func=CitationEditView.as_view("person_citations_edit",
+                                                entity="persons",
+                                                    api_key=api_key))
+
 app.add_url_rule('/persons/<entity_id>/citations/<field>',
                  view_func=CitationView.as_view("person_citations",
                                                 entity="persons"))
 
-app.add_url_rule('/persons/<entity_id>/citations/<field>/edit',
-                 view_func=CitationView.as_view("person_citations_edit",
-                                                entity="persons"))
 
 app.add_url_rule('/persons/<entity_id>', view_func=SingleItemView.as_view("persons_views",
                                                                           entity="persons",
