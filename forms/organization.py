@@ -76,6 +76,8 @@ class OrganizationForms(BaseForm):
     area = FieldList(FormField(Area), max_entries=1)
     contact_details = FieldList(FormField(ContactForm))
     links = FieldList(FormField(LinkForm))
+    description = StringField("Description")
+    one_line_description = StringField("One Line Description")
 
 
 

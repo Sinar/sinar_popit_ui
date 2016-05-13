@@ -90,6 +90,10 @@
             {{ form.parent(class="form-control typeahead") }}
         </div>
         <div class="form-group">
+            {{ form.description.label }}<a href="/organizations/{{ entity_id }}/citations/description/edit"><span class="badge">sources</span></a>
+            {{ form.description(class="form-control") }}
+        </div>
+        <div class="form-group">
             {% if form.founding_date.errors %}
                 <div class="errors">
                     {% for error in form.founding_date.errors %}
